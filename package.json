@@ -1,0 +1,36 @@
+{
+  "name": "hidrocel-project",
+  "version": "1.0.0",
+  "description": "Este proyecto esta diseñado con el proposito de facilitar el proceso de generar una cotizacion,\r llevar su seguimiento, generar un estandar de trabajo y la generacion de tickets para que\r el cliente pueda obtener su dispositivo de forma sencilla y rapida.",
+  "main": "index.tsx",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup": "npm run setup:backend && npm run setup:frontend",
+    "setup:backend": "mysql -u root -p < sql/init.sql && npm init -y && npm install express && npm install mysql2 && npm install dotenv && npm install cors && cd \"backend\" && npm install && npm install --save-dev concurrently",
+    "setup:frontend": "mkdir frontend && cd frontend && npx create-next-app@latest . --src-dir --typescript --tailwind --app && cd .. && if exist frontend\\src rmdir /s /q frontend\\src && xcopy backup frontend\\src /e /i /y",
+    "project": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "backend": "node backend/endpoints.js",
+    "frontend": "cd frontend && npm run dev"
+  },
+  "keywords": [],
+  "author": "Abdul Gerardo Martinez Campos",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mysql2": "^3.22.3"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UP240373/Hidrocel-Project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/UP240373/Hidrocel-Project/issues"
+  },
+  "homepage": "https://github.com/UP240373/Hidrocel-Project#readme"
+}
