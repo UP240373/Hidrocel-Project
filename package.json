@@ -10,7 +10,19 @@
     "setup:frontend": "mkdir frontend && cd frontend && npx create-next-app@latest . --src-dir --typescript --tailwind --app && cd .. && if exist frontend\\src rmdir /s /q frontend\\src && xcopy backup frontend\\src /e /i /y",
     "project": "concurrently \"npm run frontend\" \"npm run backend\"",
     "backend": "node backend/endpoints.js",
-    "frontend": "cd frontend && npm run dev"
+    "frontend": "cd frontend && npm run dev",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm install",
+    "build": "npm run build:frontend && npm run build:backend",
+    "start:prod": "node backend/endpoints.js",
+    "export": "npm run build && npm install -g pkg && pkg backend\\endpoints.js --config pkg-config.json --output hidrocel-app.exe && copy hidrocel-app.exe distribution\\ && copy .env distribution\\ && tar -a -c -f \"hidrocel-app.zip\" distribution",
+    "startExe": ".\\hidrocel-app.exe"
+  },
+  "bin": "db.js", 
+  "pkg": {
+    "scripts": ".next/**/*.js", 
+    "assets": "public/**/*",     
+    "targets": ["node16-win-x64"] 
   },
   "keywords": [],
   "author": "Abdul Gerardo Martinez Campos",

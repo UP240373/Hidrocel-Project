@@ -4,20 +4,23 @@ require('dotenv').config({ quiet: true });
 
 // Crear la conexion a la base de datos
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'db_hidrocel',
+  port: process.env.DB_PORT || 3306
 });
+
+console.log('📁 Directorio actual:', process.cwd());
 
 // Intentar Conectarse a la base de datos
 connection.connect((err) => {
-  console.log("Connection with the database...");
   if (err) {
-    console.error("Error in the connection", err);
-    return;
-  } 
-  console.log("Connection successfully");
+    console.error('❌ Error conectando a MySQL:', err.message);
+    console.log('⚠️ La app funcionará, pero la base de datos no estará disponible');
+  } else {
+    console.log('✅ Conectado a MySQL');
+  }
 });
 
 // Exportacion de la conexion a la base de datos

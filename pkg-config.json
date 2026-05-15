@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "start": "node backend/endpoints.js"
+  },
+  "pkg": {
+    "assets": [
+      "frontend/.next/**/*",
+      "backend/**/*.js",
+      ".env"
+    ],
+    "targets": ["node18-win-x64"]
+  }
+}
