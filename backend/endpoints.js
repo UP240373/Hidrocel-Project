@@ -1,3 +1,4 @@
+
 // ============ IMPORTACIONES ============
 const express = require("express");
 const path = require('path');
@@ -6,6 +7,10 @@ const cors = require('cors');
 const logger = require('./logger');
 const db = require("./db");
 require('dotenv').config();  // Cargar variables de entorno
+
+// Importanciones de ENDPOINTS
+const authEndpoints = require('./routes/auth');
+const adminsEndpoints = require('./routes/admins');
 
 // ============ CONFIGURACIÓN ============
 const app = express();
@@ -21,9 +26,8 @@ app.use(cors({
 
 
 // ============ ENDPOINTS API ============
-// Aquí van tus endpoints
 
-// Ejemplo:
+// GET /api/test = Endpoint para testear la conexion a la API
 app.get('/api/test', (req, res) => {
   logger.info("Se hizo una prueba", {
     endpoint: '/api/test',
@@ -33,6 +37,10 @@ app.get('/api/test', (req, res) => {
   });
   res.status(200).json({ success: "true", message: "API funcionando" });
 });
+
+// Endpoints para admins
+app.use('/admin', adminsEndpoints);
+app.use('/auth', authEndpoints);
 
 // ============ SERVIDOR NEXT.JS ============
 // Servir archivos estáticos de Next.js

@@ -1,0 +1,25 @@
+
+:root {
+  --color1: #D9D9D9;
+}
+
+.bodyPopUp {
+  width: 80vh;
+  padding: 2%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: var(--color1);
+  border-radius: 20;
+  border: 0 solid gray;
+  font-family: "Arial Narrow", Arial, sans-serif;
+}
+
+.bottonExitPopUp {
+  justify-self: right;
+  max-width: 15%;
+}
+
+.bottonExitPopUp:hover {
+  cursor: pointer;
+}

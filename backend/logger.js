@@ -55,6 +55,66 @@ const writeLog = (type, data) => {
 };
 
 const logger = {
+
+  /* =========== Admins log =========== */
+
+  getAllAdmins: (usersCount, ip, userAgent) => {
+    writeLog('admins_get_all', {
+      action: 'GET_ALL_ADMINS',
+      usersCount,
+      ip,
+      userAgent
+    });
+  },
+
+  getAdminById: (adminId, found, ip, userAgent) => {
+    writeLog('admins_get_by_id', {
+      action: 'GET_ADMINS_BY_ID',
+      adminId,
+      found, // true/false
+      ip,
+      userAgent
+    });
+  },
+
+  createAdmin: (userData, newUserId, ip, userAgent) => {
+    // No guardar contraseña en logs
+    const { password, ...safeUserData } = userData;
+    writeLog('users_create', {
+      action: 'CREATE_USER',
+      userData: safeUserData,
+      newUserId,
+      ip,
+      userAgent
+    });
+  },
+
+  updateAdmin: (adminId, updatedData, ip, userAgent) => {
+    // No guardar contraseña en logs
+    const { password, ...safeData } = updatedData;
+    writeLog('admins_update', {
+      action: 'UPDATE_ADMIN',
+      adminId,
+      updatedData: safeData,
+      ip,
+      userAgent
+    });
+  },
+
+  deleteAdmin: (adminId, deletedAdminData, ip, userAgent) => {
+    writeLog('admins_delete', {
+      action: 'DELETE_ADMIN',
+      adminId,
+      deletedAdminData: {
+        id: deletedAdminData?.id,
+        name: deletedAdminData?.name,
+        administrator_type: deletedAdminData?.administrator_type
+      },
+      ip,
+      userAgent
+    });
+  },
+
   // Error general
   error: (endpoint, error, ip) => {
     writeLog('users_error', {

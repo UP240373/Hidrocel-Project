@@ -1,0 +1,72 @@
+
+.tableMain {
+  width: 156vh;
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 2%;
+}
+
+.cellDiv {
+  display: flex;
+  flex-direction: row;
+  padding: 1%;
+  border: 1px solid black;
+}
+
+h3 {
+  padding: 0 10px;
+  font-size: 20;
+}
+
+.cellInfo {
+  display: flex;
+  flex-direction: row;
+  font-size: 16;
+}
+
+.buttonDiv {
+  display: flex;
+  flex-direction: row;
+  width: 45vh;
+  justify-content: center;
+  align-items: center;
+} 
+
+.buttonInfoEdit {
+  margin: 0 3%;
+  padding: 1px 8%;
+  background: #F9F070;
+  border-radius: 20;
+  font-size: 18;
+}
+
+.buttonInfoEdit:hover {
+  cursor: pointer;
+  background: #fff785;
+}
+
+.buttonInfoEdit:active {
+  transform: translate(1px, 1px);
+}
+
+.buttonInfoDelete {
+  margin: 0 3%;
+  padding: 1px 8%;
+  background: #FF8A8A;
+  border-radius: 20;
+  font-size: 18;
+}
+
+.buttonInfoDelete:hover {
+  cursor: pointer;
+  background: #ff9797;
+}
+
+.buttonInfoDelete:active {
+  transform: translate(1px, 1px);
+}
+
+.messageInfo {
+  font-size: 20;
+}

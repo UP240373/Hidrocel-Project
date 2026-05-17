@@ -1,0 +1,103 @@
+
+.main {
+  font-family: "Arial Narrow", Arial, sans-serif;
+}
+
+.body {
+  display: flex;
+  flex-direction: row;
+  margin: 0.7% -0.7% 0;
+}
+
+.bodyMain {
+  align-content: center;
+  justify-items: center;
+  width: 150vh;
+}
+
+.title {
+  min-width: 70vh;
+  text-align: center;
+  border-bottom: 3px solid black;
+  font-size: 24;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.divButton {
+  display: flex;
+  min-width: 50vh;
+  margin: 8% 0 8%;
+  padding: 2% 4% 2%;
+  align-items: center;
+  background: #E9FCFF;
+  box-shadow: 2px 2px 5px gray;
+  border-radius: 20;
+}
+
+.divButton:hover {
+  cursor: pointer;
+  background: #f1fdff;
+}
+
+.divButton:active {
+  transform: translate(1px, 1px);
+}
+
+.itemButton {
+  margin: 0 3% 0;
+  font-size: 16;
+}
+
+.titleButton {
+  font-size: 24;
+  font-weight: bold;
+}
+
+.titlePopUp {
+  width: 50vh;
+  justify-self: center;
+  margin: 5% 0 1%;
+  background: #9197BB;
+  border-radius: 20;
+  font-size: 22;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.textPopUp {
+  font-size: 14;
+}
+
+.inputPopUp {
+  width: 60vh;
+  margin: 5% 0;
+  padding: 2% 2% 2%;
+  border: 1px solid transparent;
+  border-radius: 13;
+  text-align: left;
+}
+
+.buttonPopUp {
+  padding: 1% 8%;
+  background: #B7CDFF;
+  border: 0px solid black;
+  border-radius: 20;
+  font-size: 18;
+}
+
+.buttonPopUp:hover {
+  background: #c1d4ff;
+}
+
+.buttonPopUp:active {
+  transform: translate(1px, 1px);
+}
+
+.messageDivPopUp {
+  margin: 0 15% 3%;
+  padding: 0.2%;
+  background: transparent;
+  border: 3px solid #9197BB;
+  border-radius: 20;
+  color: #9197BB;
+  font-weight: bold;
+}

@@ -1,0 +1,66 @@
+
+.mainAdmin {
+  font-family: "Arial Narrow", Arial, sans-serif;
+}
+
+.bodyAdmin {
+  display: flex;
+  flex-direction: row;
+  height: 89vh;
+  margin: 0.7% -0.7% 0;
+}
+
+.bodyMainAdmin {
+  width: 162vh;
+}
+
+.titleAdmin {
+  width: 50vh;
+  height: 7vh;
+  text-align: center;
+  margin: 1% 2%;
+  border-bottom: 2px solid black;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.searchDivAdmin {
+  margin: 5% 2% 0;
+  padding: 1%;
+  align-items: center;
+  font-weight: bold;
+  font-size: 20;
+}
+
+.searchAdmin {
+  width: 80vh;
+  margin: 0 1%;
+  padding: 1%;
+  border: 1px solid black;
+  border-radius: 15;
+}
+
+.buttonsAdmin {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 3% 1% 0;
+}
+
+.buttonAdmin {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 30vh;
+  background: #B7CDFF;
+  border-radius: 20;
+}
+
+.buttonAdmin:hover {
+  cursor: pointer;
+  background: #c1d4ff;
+}
+
+.buttonAdmin:active {
+  transform: translate(1px, 1px);
+}
