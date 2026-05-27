@@ -11,6 +11,7 @@ require('dotenv').config();  // Cargar variables de entorno
 // Importanciones de ENDPOINTS
 const authEndpoints = require('./routes/auth');
 const adminsEndpoints = require('./routes/admins');
+const repairsEndpoints = require('./routes/repairs');
 
 // ============ CONFIGURACIÓN ============
 const app = express();
@@ -41,6 +42,7 @@ app.get('/api/test', (req, res) => {
 // Endpoints para admins
 app.use('/admin', adminsEndpoints);
 app.use('/auth', authEndpoints);
+app.use('/repair', repairsEndpoints);
 
 // ============ SERVIDOR NEXT.JS ============
 // Servir archivos estáticos de Next.js

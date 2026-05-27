@@ -3,7 +3,7 @@
 'use client'
 
 // Importanciones para la pagina
-import { verify, verifyAdmin } from './API/api';
+import { verify, verifyManager, verifyAdmin } from './API/api';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -34,18 +34,30 @@ export default function Home() {
     setPassword('');
 
     setMessage('');
-    }, [isOpenAdmins]);
+    }, [isOpenAdmins, isOpenContability, isOpenRepairs]);
 
   // Funcion para cambiar a interfaces de Gerentes y Admins
   const onChangeAdmin = async (option : string) => {
-    
     if (password == "") {
-      console.log("Introduce una contraseña");
+      setMessage("Introduce una contraseña");
       return
     };
 
+    const user = {
+      password: password
+    }
+
     if (option === "repairs") {
-      console.log("seleccionaste reparaciones");
+      try {
+        const response = await verifyManager(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("./Repairs");
+      } catch (err) {
+        console.error(err)
+      }
     }
 
     if (option === "contability") {
@@ -53,10 +65,6 @@ export default function Home() {
     }
 
     if (option === "administrators") {
-      const user = {
-        password: password
-      }
-
       try {
         const response = await verifyAdmin(user);
         if(response.error) {
@@ -139,9 +147,19 @@ export default function Home() {
           <h2>Contraseña</h2>
         </div>
 
-        <input placeholder='Introduce tu contraseña' className='inputPopUp'></input><br/>
+        <input 
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
 
-        <button onClick={() => console.log("aceptar reparacion")} className='buttonPopUp'>Continuar</button>
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("repairs")} className='buttonPopUp'>Continuar</button>
       </Modal>
 
       <Modal isOpen={isOpenContability} onClose={() => setOpenContability(false)}>

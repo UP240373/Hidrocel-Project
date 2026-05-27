@@ -3,6 +3,7 @@
 'use client'
 
 // Importanciones para la pagina
+import { verifyManager } from '../API/api';
 import { getAdmin, createAdmin, updateAdmin, deleteAdmin } from '../API/Admin/api';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -75,21 +76,28 @@ export default function Page() {
     setMessage('');
   }, [isOpenNewAdmin, isOpenEditAdmin, isOpenDeleteAdmin]);
 
-  // Funcion para filtrar por nombre los Administradores
-  const onFilter = (admin : String[], newText : string) => {
-    
-  }
-
   // Funcion para cambiar a interfaces de Gerentes y Admins
-  const onChangeAdmin = (option : string) => {
-    
+  const onChangeAdmin = async (option : string) => {
     if (passwordAdmin == "") {
-      console.log("Introduce una contraseña");
+      setMessage("Introduce una contraseña");
       return
     };
 
+    const user = {
+      password: passwordAdmin
+    }
+
     if (option === "repairs") {
-      console.log("seleccionaste reparaciones");
+      try {
+        const response = await verifyManager(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("../Repairs");
+      } catch (err) {
+        console.error(err)
+      }
     }
 
     if (option === "contability") {
@@ -120,7 +128,7 @@ export default function Page() {
     }
 
     if (newType == '') {
-      setMessage("Introduce un tipo de administrador");
+      setMessage("Introduce un tipo de usuario");
       return;
     }
 
@@ -186,7 +194,7 @@ export default function Page() {
     }
 
     if (type == '') {
-      setMessage("Introduce un tipo de administrador");
+      setMessage("Introduce un tipo de usuario");
       return;
     }
 
@@ -199,8 +207,8 @@ export default function Page() {
     }
 
     try {
-      console.log(id, editAdmin)
       const response = await updateAdmin(id, editAdmin);
+      console.log(response);
       reloadTable();
       setIdAdmin(0);
       setName('');
@@ -285,7 +293,7 @@ export default function Page() {
         <input 
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
-          placeholder='Introduce tu nombre(s)' 
+          placeholder='Introduce nombre(s)' 
           className='inputPopUp'
         ></input><br/>
 
@@ -293,7 +301,7 @@ export default function Page() {
         <input 
           value={newLastName}
           onChange={(e) => setNewLastName(e.target.value)}
-          placeholder='Introduce tus apellidos' 
+          placeholder='Introduce apellidos' 
           className='inputPopUp'
         ></input><br/>
 
@@ -301,7 +309,7 @@ export default function Page() {
         <input 
           value={newPhone}
           onChange={(e) => setNewPhone(e.target.value)}
-          placeholder='Introduce tu numero de telefono' 
+          placeholder='Introduce el numero de telefono' 
           className='inputPopUp'
         ></input><br/>
 
@@ -309,7 +317,7 @@ export default function Page() {
         <input 
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          placeholder='Introduce tu contraseña' 
+          placeholder='Introduce una contraseña' 
           className='inputPopUp'
         ></input><br/>
 
@@ -318,6 +326,7 @@ export default function Page() {
           <option value={''}>Introduce un tipo</option>
           <option value={'Admin'}>Administrador</option>
           <option value={'Gerente'}>Gerente</option>
+          <option value={'Empleado'}>Empleado</option>
         </select><br/>
 
         {message != '' ? 
@@ -371,6 +380,7 @@ export default function Page() {
           <option value={''}>Introduce un tipo</option>
           <option value={'Admin'}>Administrador</option>
           <option value={'Gerente'}>Gerente</option>
+          <option value={'Empleado'}>Empleado</option>
         </select><br/>
 
         <button onClick={() => onFinallyEditAdmin(idAdmin)} className='buttonPopUp'>Guardar cambios</button>
@@ -391,9 +401,19 @@ export default function Page() {
           <h2>Contraseña</h2>
         </div>
 
-        <input placeholder='Introduce tu contraseña' className='inputPopUp'></input><br/>
+        <input 
+          value={passwordAdmin}
+          onChange={(e) => setPasswordAdmin(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
 
-        <button onClick={() => console.log("aceptar reparacion")} className='buttonPopUp'>Continuar</button>
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("repairs")} className='buttonPopUp'>Continuar</button>
       </Modal>
 
       <Modal isOpen={isOpenContability} onClose={() => setOpenContability(false)}>

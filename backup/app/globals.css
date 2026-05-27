@@ -69,7 +69,17 @@
 
 .inputPopUp {
   width: 60vh;
-  margin: 5% 0;
+  margin: 2.5% 1%;
+  padding: 2% 2% 2%;
+  border: 1px solid transparent;
+  border-radius: 13;
+  text-align: left;
+}
+
+.textareaPopUp {
+  width: 75vh;
+  height: 5vh;
+  margin: 2.5% 1%;
   padding: 2% 2% 2%;
   border: 1px solid transparent;
   border-radius: 13;
@@ -86,6 +96,7 @@
 
 .buttonPopUp:hover {
   background: #c1d4ff;
+  cursor: pointer;
 }
 
 .buttonPopUp:active {

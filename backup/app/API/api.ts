@@ -22,10 +22,28 @@ export const test = async () => {
   }
 };
 
-// Verificar si es administrador o gerente
+// Verificar si existe en el sistema
 export const verify = async (cuerpo : user ) => {
   try {
     const response = await fetch(`${API}/auth`, {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(cuerpo)
+    })
+    const data = response.json();
+    return data;
+  }
+  catch (err) {
+    console.error("Algo salio mal", err)
+  }
+};
+
+// Verificar si es administrador o gerente
+export const verifyManager = async (cuerpo : user ) => {
+  try {
+    const response = await fetch(`${API}/auth/manager`, {
       method: 'POST', 
       headers: {
         'Content-Type': 'application/json',

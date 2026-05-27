@@ -5,7 +5,7 @@ const logger = require('../logger');
 const db = require("../db");
 const router = express.Router();
 
-// POST /auth = Endpoint para verificar que es un administrador o gerente
+// POST /auth = Endpoint para verificar que existe el usuario
 router.post('/', (req, res) => {
   const search = `SELECT * FROM administrators WHERE password = "${req.body.password}" AND is_deleted = 0`;
   db.query(search, (err, admin) => {
@@ -21,6 +21,25 @@ router.post('/', (req, res) => {
 
     logger.getAdminById(admin.length, req.ip, req.headers['user-agent']);
     res.status(200).json({ success: true, message: "Get user successfully", admin });
+  });
+});
+
+// POST /auth/manager = Endpoint para verificar que es un administrador o gerente
+router.post('/manager', (req, res) => {
+  const search = `SELECT * FROM administrators WHERE password = "${req.body.password}" AND (administrator_type = "Admin" OR administrator_type = "Gerente") AND is_deleted = 0`;
+  db.query(search, (err, admin) => {
+    if (err) {
+      logger.error("/auth/admin", err, req.ip);
+      return res.status(500).json({ success: false, error: "Database error", err });
+    }
+
+    if (admin.length === 0) {
+      logger.getAdminById(req.params.id, false, req.ip, req.headers['user-agent']);
+      return res.status(404).json({ error: "The admin doesn't exists" });
+    }
+
+    logger.getAdminById(admin.length, req.ip, req.headers['user-agent']);
+    res.status(200).json({ success: true, message: "Get admin successfully", admin });
   });
 });
 

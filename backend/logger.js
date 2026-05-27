@@ -115,6 +115,65 @@ const logger = {
     });
   },
 
+  /* =========== Admins log =========== */
+
+  getAllRepairs: (repairsCount, ip, userAgent) => {
+    writeLog('repairs_get_all', {
+      action: 'GET_ALL_REPAIRS',
+      repairsCount,
+      ip,
+      userAgent
+    });
+  },
+
+  getRepairById: (repairId, found, ip, userAgent) => {
+    writeLog('repair_get_by_id', {
+      action: 'GET_REPAIRS_BY_ID',
+      repairId,
+      found, // true/false
+      ip,
+      userAgent
+    });
+  },
+
+  createRepair: (repairData, newRepairId, ip, userAgent) => {
+    // No guardar contraseña en logs
+    const { password, ...safeUserData } = repairData;
+    writeLog('repairs_create', {
+      action: 'CREATE_REPAIR',
+      repairData: safeUserData,
+      newRepairId,
+      ip,
+      userAgent
+    });
+  },
+
+  updateRepair: (repairId, updatedData, ip, userAgent) => {
+    // No guardar contraseña en logs
+    const { password, ...safeData } = updatedData;
+    writeLog('repairs_update', {
+      action: 'UPDATE_REPAIR',
+      repairId,
+      updatedData: safeData,
+      ip,
+      userAgent
+    });
+  },
+
+  deleteRepair: (repairId, deletedRepairData, ip, userAgent) => {
+    writeLog('repairs_delete', {
+      action: 'DELETE_REPAIR',
+      repairId,
+      deletedRepairData: {
+        id: deletedRepairData?.id,
+        name: deletedRepairData?.name,
+        administrator_type: deletedRepairData?.administrator_type
+      },
+      ip,
+      userAgent
+    });
+  },
+
   // Error general
   error: (endpoint, error, ip) => {
     writeLog('users_error', {

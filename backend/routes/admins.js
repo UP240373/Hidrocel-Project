@@ -36,7 +36,7 @@ router.get('/:id', (req, res) => {
 
     const found = admin.length > 0;
     logger.getAdminById(req.params.id, found, req.ip, req.headers['user-agent']);
-    res.status(200).json({ message: "Get admin successfully", admin});
+    res.status(200).json({ message: "Get admin successfully", admin });
   });
 });
 
@@ -78,9 +78,9 @@ router.put('/:id', (req, res) => {
       return res.status(500).json({ error: "Database error", err });
     }
 
-    if (user.length > 0) {
+    if (user.length > 1) {
       logger.getAdminById(req.params.id, false, req.ip, req.headers['user-agent']);
-      return res.status(404).json({ error: "The password already exists" });
+      return res.status(404).json({ error: "The user already exists" });
     }
 
     const search = `SELECT * FROM administrators WHERE id_admin = ${req.params.id} AND is_deleted = 0`;
@@ -92,7 +92,7 @@ router.put('/:id', (req, res) => {
 
       if (user.length === 0) {
         logger.getAdminById(req.params.id, false, req.ip, req.headers['user-agent']);
-        return res.status(404).json({ error: "The admin doesn't exists" });
+        return res.status(404).json({ error: "The user doesn't exists" });
       }
 
       const newChanges = req.body;
@@ -103,7 +103,7 @@ router.put('/:id', (req, res) => {
           return res.status(500).json({ error: "Database error", err });
         }
         logger.updateAdmin(req.params.id, req.body, req.ip, req.headers['user-agent']);
-        res.status(200).json({ message: "The admin has been updated" });
+        res.status(200).json({ message: "The user has been updated" });
       });
 
     });

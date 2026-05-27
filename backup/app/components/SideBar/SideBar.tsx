@@ -20,10 +20,15 @@ const SideBar = ({ isUseRepairs, isUseContability, isUseAdmins, isOpenRepairs, i
   
   return (
     <div className="bodySideBar">
+      {isUseRepairs ? 
+      <div className="bottonInactiveSideBar">
+        <Image  width={30} src={engranaje} alt="" className="imgSideBar"/>
+        <p>Reparaciones</p>
+      </div> : 
       <div className="bottonActiveSideBar" onClick={() => isOpenRepairs(true)}>
         <Image  width={30} src={engranaje} alt="" className="imgSideBar"/>
         <p>Reparaciones</p>
-      </div>
+      </div>}
 
       <div className="bottonActiveSideBar" onClick={() => isOpenContability(true)}>
         <Image  width={30} src={iconContability} alt="" className="imgSideBar"/>
