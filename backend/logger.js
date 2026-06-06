@@ -115,7 +115,7 @@ const logger = {
     });
   },
 
-  /* =========== Admins log =========== */
+  /* =========== Repairs log =========== */
 
   getAllRepairs: (repairsCount, ip, userAgent) => {
     writeLog('repairs_get_all', {
@@ -168,6 +168,65 @@ const logger = {
         id: deletedRepairData?.id,
         name: deletedRepairData?.name,
         administrator_type: deletedRepairData?.administrator_type
+      },
+      ip,
+      userAgent
+    });
+  },
+
+  /* =========== Diagnostics log =========== */
+
+  getAllDiagnostics: (diagnosticsCount, ip, userAgent) => {
+    writeLog('diagnostics_get_all', {
+      action: 'GET_ALL_DIAGNOSTICS',
+      diagnosticsCount,
+      ip,
+      userAgent
+    });
+  },
+
+  getDiagnosticByDevice: (diagnosticDevice, found, ip, userAgent) => {
+    writeLog('diagnostic_get_by_device', {
+      action: 'GET_DIAGNOSTIC_BY_DEVICE',
+      diagnosticDevice,
+      found, // true/false
+      ip,
+      userAgent
+    });
+  },
+
+  createDiagnostic: (diagnosticData, newDiagnosticDevice, ip, userAgent) => {
+    // No guardar contraseña en logs
+    const { password, ...safeUserData } = diagnosticData;
+    writeLog('diagnostics_create', {
+      action: 'CREATE_DIAGNOSTIC',
+      diagnosticData: safeUserData,
+      newDiagnosticDevice,
+      ip,
+      userAgent
+    });
+  },
+
+  updateDiagnostic: (diagnosticDevice, updatedData, ip, userAgent) => {
+    // No guardar contraseña en logs
+    const { password, ...safeData } = updatedData;
+    writeLog('diagnostics_update', {
+      action: 'UPDATE_DIAGNOSTIC',
+      diagnosticDevice,
+      updatedData: safeData,
+      ip,
+      userAgent
+    });
+  },
+
+  deleteDiagnostic: (diagnosticDevice, deletedDiagnosticData, ip, userAgent) => {
+    writeLog('diagnostics_delete', {
+      action: 'DELETE_DIAGNOSTIC',
+      diagnosticDevice,
+      deletedDiagnosticData: {
+        device: deletedDiagnosticData?.device,
+        customerName: deletedDiagnosticData?.customerName,
+        deliveryDate: deletedDiagnosticData?.delivery_date
       },
       ip,
       userAgent

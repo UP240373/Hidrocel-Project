@@ -20,6 +20,8 @@ export default function Home() {
   const router = useRouter();
 
   // Variables para abrir pantallas emergentes
+  const [isOpenDiagnostic, setOpenDiagnostic] = useState(false);
+  const [isOpenPrice, setOpenPrice] = useState(false);
   const [isOpenRepairs, setOpenRepairs] = useState(false);
   const [isOpenContability, setOpenContability] = useState(false);
   const [isOpenAdmins, setOpenAdmins] = useState(false);
@@ -34,7 +36,70 @@ export default function Home() {
     setPassword('');
 
     setMessage('');
-    }, [isOpenAdmins, isOpenContability, isOpenRepairs]);
+    }, [isOpenDiagnostic, isOpenPrice, isOpenAdmins, isOpenContability, isOpenRepairs]);
+
+  // Funcion para cambiar a diagnostico y cotizacion
+  const onChangeAction = async (option : string) => {
+    if (password == "") {
+      setMessage("Introduce una contraseña");
+      return
+    };
+
+    const user = {
+      password: password
+    }
+
+    if (option === "diagnostics") {
+      try {
+        const response = await verify(user);
+        console.log(response.admin[0].id_admin);
+
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+
+        // Guardar id de un usuario
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => {
+          localStorage.setItem('user_id', response.admin[0].id_admin);
+        });
+        } else {
+          // DOM ya está cargado, ejecutar inmediatamente
+          localStorage.setItem('user_id', response.admin[0].id_admin);
+        }
+
+        router.push("./Diagnostics");
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    if (option === "price") {
+      try {
+        const response = await verify(user);
+
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+
+        // Guardar id de un usuario
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => {
+          localStorage.setItem('user_id', response.admin[0].id_admin);
+        });
+        } else {
+          // DOM ya está cargado, ejecutar inmediatamente
+          localStorage.setItem('user_id', response.admin[0].id_admin);
+        }
+        
+        router.push("./");
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  };
 
   // Funcion para cambiar a interfaces de Gerentes y Admins
   const onChangeAdmin = async (option : string) => {
@@ -93,7 +158,7 @@ export default function Home() {
             </div>
 
             <div>
-              <div className="divButton" onClick={() => console.log("boton diagnostico")}>
+              <div className="divButton" onClick={() => setOpenDiagnostic(true)}>
                 <Image
                   width={60}
                   src={iconDiagnostic}
@@ -141,6 +206,46 @@ export default function Home() {
         
         <SideBar isUseRepairs={false} isUseContability={false} isUseAdmins={false} isOpenRepairs={setOpenRepairs} isOpenContability={setOpenContability} isOpenAdmins={setOpenAdmins}/>
       </div>
+
+      <Modal isOpen={isOpenDiagnostic} onClose={() => setOpenDiagnostic(false)}>
+        <div className='titlePopUp'>
+          <h2>Contraseña</h2>
+        </div>
+
+        <input 
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
+
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAction("diagnostics")} className='buttonPopUp'>Continuar</button>
+      </Modal>
+
+      <Modal isOpen={isOpenPrice} onClose={() => setOpenPrice(false)}>
+        <div className='titlePopUp'>
+          <h2>Contraseña</h2>
+        </div>
+
+        <input 
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
+
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAction("price")} className='buttonPopUp'>Continuar</button>
+      </Modal>
       
       <Modal isOpen={isOpenRepairs} onClose={() => setOpenRepairs(false)}>
         <div className='titlePopUp'>

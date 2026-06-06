@@ -1,0 +1,89 @@
+
+.tableMain {
+  width: 156vh;
+  max-height: 290px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 2%;
+}
+
+.cellDiv {
+  display: flex;
+  flex-direction: row;
+  padding: 1%;
+  border: 1px solid black;
+}
+
+h3 {
+  padding: 0 10px;
+  font-size: 20;
+}
+
+.cellInfo {
+  display: flex;
+  flex-direction: row;
+  font-size: 16;
+}
+
+.buttonDiv {
+  display: flex;
+  flex-direction: row;
+  width: 50vh;
+  justify-content: center;
+  align-items: center;
+} 
+
+.buttonInfoEdit {
+  margin: 0 3%;
+  padding: 1px 8%;
+  background: #FFF9A5;
+  border-radius: 20;
+  font-size: 18;
+}
+
+.buttonInfoEdit:hover {
+  cursor: pointer;
+  background: #fffbbe;
+}
+
+.buttonInfoEdit:active {
+  transform: translate(1px, 1px);
+}
+
+.buttonInfoDelete {
+  margin: 0 3%;
+  padding: 1px 8%;
+  background: #FFCBEB;
+  border-radius: 20;
+  font-size: 18;
+}
+
+.buttonInfoDelete:hover {
+  cursor: pointer;
+  background: #fdd3ed;
+}
+
+.buttonInfoDelete:active {
+  transform: translate(1px, 1px);
+}
+
+.buttonInfoConfirm {
+  margin: 0 3%;
+  padding: 1px 8%;
+  background: #DAFFAB;
+  border-radius: 20;
+  font-size: 18;
+}
+
+.buttonInfoConfirm:hover {
+  cursor: pointer;
+  background: #e2ffbb;
+}
+
+.buttonInfoConfirm:active {
+  transform: translate(1px, 1px);
+}
+
+.messageInfo {
+  font-size: 20;
+}
