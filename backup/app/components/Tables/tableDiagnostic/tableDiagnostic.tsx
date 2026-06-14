@@ -24,12 +24,12 @@ interface Diagnostic {
 interface TableAdminProps {
   search: string,
 
-  onStartConfirmDiagnostic: (device : string, customer_name : string) => void,
+  onConfirmDiagnostic: (device : string, customer_name : string) => void,
   onStartEditDiagnostic: (device : string, customer_name : string) => void;
   onStartDeleteDiagnostic: (device : string, customer_name : string) => void;
 }
 
-export default function Page({ search, onStartConfirmDiagnostic, onStartEditDiagnostic, onStartDeleteDiagnostic } : TableAdminProps) {
+export default function Page({ search, onConfirmDiagnostic, onStartEditDiagnostic, onStartDeleteDiagnostic } : TableAdminProps) {
 
   // Lista con todos los diagnosticos del sistema
   const [diagnostics, setDiagnostics] = useState<Diagnostic[]>([]);
@@ -57,7 +57,7 @@ export default function Page({ search, onStartConfirmDiagnostic, onStartEditDiag
         diagnosticsFilter.map((diagnostic, index) => (
           <div key={index} className='cellDiv'>
             <div style={{width: '100vh'}}>
-              <h3>{diagnostic.customer_name}</h3>
+              <h3>{diagnostic.customer_name} - {diagnostic.device}</h3>
 
               <div className='cellInfo'>
                 <p style={{padding: '0 4%'}}><b>Dia de entrega:</b> {diagnostic.delivery_date.split('T')[0]}</p>
@@ -66,7 +66,7 @@ export default function Page({ search, onStartConfirmDiagnostic, onStartEditDiag
             </div>
 
             <div className='buttonDiv'>
-              <div className='buttonInfoConfirm' onClick={() => onStartConfirmDiagnostic(diagnostic.device, diagnostic.customer_name)}>
+              <div className='buttonInfoConfirm' onClick={() => onConfirmDiagnostic(diagnostic.device, diagnostic.customer_name)}>
                 <p>Aceptar</p>
               </div>
 

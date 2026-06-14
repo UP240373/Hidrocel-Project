@@ -16,7 +16,6 @@ interface diagnostic {
   estimated_price: Number,
   delivery_date: string,
   made_by: Number
-
 }
 
 // Obtener todos los diagnosticos

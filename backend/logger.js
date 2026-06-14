@@ -233,6 +233,65 @@ const logger = {
     });
   },
 
+  /* =========== Quotes log =========== */
+
+  getAllQuotes: (quotesCount, ip, userAgent) => {
+    writeLog('quotes_get_all', {
+      action: 'GET_ALL_QUOTES',
+      quotesCount,
+      ip,
+      userAgent
+    });
+  },
+
+  getQuoteById: (quoteId, found, ip, userAgent) => {
+    writeLog('quote_get_by_id', {
+      action: 'GET_QUOTE_BY_ID',
+      quoteId,
+      found, // true/false
+      ip,
+      userAgent
+    });
+  },
+
+  createQuote: (quoteData, newQuoteId, ip, userAgent) => {
+    // No guardar contraseña en logs
+    const { password, ...safeUserData } = quoteData;
+    writeLog('quotes_create', {
+      action: 'CREATE_QUOTE',
+      quoteData: safeUserData,
+      newQuoteId,
+      ip,
+      userAgent
+    });
+  },
+
+  updateQuote: (quoteId, updatedData, ip, userAgent) => {
+    // No guardar contraseña en logs
+    const { password, ...safeData } = updatedData;
+    writeLog('quotes_update', {
+      action: 'UPDATE_QUOTE',
+      quoteId,
+      updatedData: safeData,
+      ip,
+      userAgent
+    });
+  },
+
+  deleteQuote: (quoteId, deletedQuoteData, ip, userAgent) => {
+    writeLog('quotes_delete', {
+      action: 'DELETE_QUOTES',
+      quoteId,
+      deletedQuoteData: {
+        id: deletedQuoteData?.id_quote,
+        customerName: deletedQuoteData?.customerName,
+        deliveryDate: deletedQuoteData?.delivery_date
+      },
+      ip,
+      userAgent
+    });
+  },
+
   // Error general
   error: (endpoint, error, ip) => {
     writeLog('users_error', {

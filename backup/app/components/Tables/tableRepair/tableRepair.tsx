@@ -38,11 +38,10 @@ export default function Page({ search, filter, onStartEditRepair, onStartDeleteR
   repairsFilter = repairs.filter(repair => repair.name.toLowerCase().includes(search.toLowerCase()));
   repairsFilter = filter != 'Todos' ? repairsFilter.filter(repair => repair.device.toLowerCase().includes(filter.toLowerCase())) : repairsFilter;
 
-  // Funcion para obtener todos los admins
+  // Funcion para obtener todas las reparaciones
   const onGetRepairs = async () => {
     try {
       const response = await getRepairs();
-      console.log(response.repairs)
       setRepairs(response.repairs);
     } catch(err) {
       console.error(err);

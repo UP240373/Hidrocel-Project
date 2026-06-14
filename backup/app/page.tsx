@@ -21,7 +21,7 @@ export default function Home() {
 
   // Variables para abrir pantallas emergentes
   const [isOpenDiagnostic, setOpenDiagnostic] = useState(false);
-  const [isOpenPrice, setOpenPrice] = useState(false);
+  const [isOpenQuote, setOpenQuote] = useState(false);
   const [isOpenRepairs, setOpenRepairs] = useState(false);
   const [isOpenContability, setOpenContability] = useState(false);
   const [isOpenAdmins, setOpenAdmins] = useState(false);
@@ -36,7 +36,7 @@ export default function Home() {
     setPassword('');
 
     setMessage('');
-    }, [isOpenDiagnostic, isOpenPrice, isOpenAdmins, isOpenContability, isOpenRepairs]);
+    }, [isOpenDiagnostic, isOpenQuote, isOpenAdmins, isOpenContability, isOpenRepairs]);
 
   // Funcion para cambiar a diagnostico y cotizacion
   const onChangeAction = async (option : string) => {
@@ -52,7 +52,6 @@ export default function Home() {
     if (option === "diagnostics") {
       try {
         const response = await verify(user);
-        console.log(response.admin[0].id_admin);
 
         if(response.error) {
           setMessage("Contraseña incorrecta");
@@ -75,7 +74,7 @@ export default function Home() {
       }
     }
 
-    if (option === "price") {
+    if (option === "quotes") {
       try {
         const response = await verify(user);
 
@@ -94,7 +93,7 @@ export default function Home() {
           localStorage.setItem('user_id', response.admin[0].id_admin);
         }
         
-        router.push("./");
+        router.push("./Quote");
       } catch (err) {
         console.error(err)
       }
@@ -166,8 +165,8 @@ export default function Home() {
                 />
 
                 <div className='itemButton'>
-                  <p className='titleButton'>Diagnóstico</p>
-                  <p>Realizar diagnostico del producto</p>
+                  <p className='titleButton'>Cotizacion</p>
+                  <p>Realizar cotizacion de un nuevo dispositivo</p>
                 </div>
 
                 <Image
@@ -177,7 +176,7 @@ export default function Home() {
                 />
               </div>
 
-              <div className="divButton" onClick={() => console.log("boton cotizacion")}>
+              <div className="divButton" onClick={() => setOpenQuote(true)}>
                 <Image
                   width={60}
                   src={iconCalculate}
@@ -186,8 +185,8 @@ export default function Home() {
 
                 
                 <div className='itemButton'>
-                  <p className='titleButton'>Cotización</p>
-                  <p>Generar cotización de reparación</p>
+                  <p className='titleButton'>Reparaciones</p>
+                  <p>Reparaciones pendientes a terminar</p>
                 </div>
                 
                 <Image
@@ -227,7 +226,7 @@ export default function Home() {
         <button onClick={() => onChangeAction("diagnostics")} className='buttonPopUp'>Continuar</button>
       </Modal>
 
-      <Modal isOpen={isOpenPrice} onClose={() => setOpenPrice(false)}>
+      <Modal isOpen={isOpenQuote} onClose={() => setOpenQuote(false)}>
         <div className='titlePopUp'>
           <h2>Contraseña</h2>
         </div>
@@ -244,7 +243,7 @@ export default function Home() {
             <p>{message}</p>
           </div> : undefined}
 
-        <button onClick={() => onChangeAction("price")} className='buttonPopUp'>Continuar</button>
+        <button onClick={() => onChangeAction("quotes")} className='buttonPopUp'>Continuar</button>
       </Modal>
       
       <Modal isOpen={isOpenRepairs} onClose={() => setOpenRepairs(false)}>

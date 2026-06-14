@@ -31,7 +31,7 @@ export const getRepairs = async () => {
 };
 
 // Obtener un tipo de reparacion
-export const getRepair = async (id : number) => {
+export const getRepair = async (id : Number) => {
   try {
     const response = await fetch(`${API}/repair/${id}`, {
       method: 'GET', 

@@ -184,7 +184,7 @@ export default function Page() {
       }
     }
 
-  // Funcion para iniciar el proceso de actualizar un administrador
+  // Funcion para iniciar el proceso de actualizar una reparacion
   const onStartEditRepair = async (id : number) => {
     setOpenEditRepair(true);
     try {
@@ -203,7 +203,7 @@ export default function Page() {
     }
   }
 
-  // Funcion para finalizar el proceso de actualizar un administrador
+  // Funcion para finalizar el proceso de actualizar una reparacion
   const onFinallyEditRepair = async (id : number) => {
   
     if (name == '') {
@@ -254,7 +254,6 @@ export default function Page() {
 
     try {
       const response = await updateRepair(id, editRepair);
-      console.log(response)
       reloadTable();
       setIdRepair(0);
       setName('');
@@ -271,7 +270,7 @@ export default function Page() {
     }
   };
 
-  // Funcion para iniciar el proceso de eliminacion de un administrador o gerente
+  // Funcion para iniciar el proceso de eliminacion de una reparacion
   const onStartDeleteRepair = async (id : number) => {
     setOpenDeleteRepair(true);
     try {
@@ -282,7 +281,7 @@ export default function Page() {
     }
   };
 
-  // Funcion para terminar el proceso de eliminacion de un administrador o gerente
+  // Funcion para terminar el proceso de eliminacion de una reparacion
   const onFinallyDeleteRepair = async (id : number) => {
     try {
       const response = await deleteRepair(id);
@@ -321,7 +320,6 @@ export default function Page() {
           </div>
 
           <TableRepair key={tableKey} search={search} filter={filter} onStartEditRepair={onStartEditRepair} onStartDeleteRepair={onStartDeleteRepair}/>
-          
 
           <div className='buttonsRepairs'>
             <div className='buttonRepairs' onClick={() => setOpenNewRepair(true)}>

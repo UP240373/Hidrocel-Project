@@ -103,6 +103,16 @@
   transform: translate(1px, 1px);
 }
 
+.buttonAddPopUp {
+  margin-left: 2%;
+  padding: 0 3%;
+  height: 40px;
+  align-self: center;
+  background: #B7CDFF;
+  border: 0px solid black;
+  border-radius: 20;
+}
+
 .messageDivPopUp {
   margin: 0 15% 3%;
   padding: 0.2%;

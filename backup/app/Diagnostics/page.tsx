@@ -5,6 +5,8 @@
 // Importanciones para la pagina
 import { verifyManager, verifyAdmin } from '../API/api';
 import { getDiagnostic, createDiagnostic, updateDiagnostic, deleteDiagnostic } from '../API/Diagnostic/api';
+import { createQuote } from '../API/Quote/api';
+import { getRepairs, getRepair } from '../API/Repair/api';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -16,6 +18,14 @@ import SideBar from '.././components/SideBar/SideBar';
 import TableDiagnostic from '@/app/components/Tables/tableDiagnostic/tableDiagnostic';
 import './diagnostic.css';
 
+interface Repair {
+  id_repair: number,
+  name: string,
+  labor_costs: number,
+  approximate_time: number,
+  piece_cost: number
+}
+
 export default function Page() {
 
   // Movimiento entre rutas
@@ -26,6 +36,7 @@ export default function Page() {
 
   useEffect(() => {
     setUserId(localStorage.getItem('user_id'));
+    onGetRepairs();
   }, []);
 
   // Datos para recarga la tabla
@@ -34,8 +45,22 @@ export default function Page() {
     setTableKey(prev => prev + 1);
   };
 
+  // Todas las reparaciones
+  const [repairs, setRepairs] = useState<Repair[]>([]);
+
+  // Funcion para obtener reparaciones
+  const onGetRepairs = async () => {
+    try {
+      const response = await getRepairs();
+      setRepairs(response.repairs)
+    } catch (err) {
+      console.error(err)
+    }
+  };
+
   // Variables para abrir pantallas emergentes
   const [isOpenNewDiagnostic, setOpenNewDiagnostic] = useState(false);
+  const [isOpenNewQuote, setOpenNewQuote] = useState(false);
   const [isOpenConfirmDiagnostic, setOpenConfirmDiagnostic] = useState(false);
   const [isOpenEditDiagnostic, setOpenEditDiagnostic] = useState(false);
   const [isOpenDeleteDiagnostic, setOpenDeleteDiagnotsic] = useState(false);
@@ -52,7 +77,7 @@ export default function Page() {
   // Mensajes de errores y soluciones
   const [message, setMessage] = useState<string>('');
 
-  // Datos para nuevo diagnostico
+  // Datos para nuevo diagnostico y cotizacion
   const [newCustomerName, setNewCustomerName] = useState<string>('');
   const [newDevice, setNewDevice] = useState<string>('');
   const [newDeliveryDate, setNewDeliveryDate] = useState<string>('');
@@ -64,6 +89,15 @@ export default function Page() {
   const [newDeviceType, setNewDeviceType] = useState<string>('');
   const [newFirstDescription, setNewFirstDescription] = useState<string>('');
   const [newDevicePassword, setNewDevicePassword] = useState<string>('');
+  const [newPieceCost, setNewPieceCost] = useState<string>('');
+  const [newFinalDiagnostic, setNewFinalDiagnostic] = useState<string>('');
+  const [newRepair, setNewRepair] = useState<string>('');
+  const [newMadeBy, setNewMadeBy] = useState<string>('');
+  const [newPass, setNewPass] = useState<string>('');
+  const [inputValues, setInputValues] = useState<{ [key: number]: string }>({});
+  const [newRepairQuote, setNewRepairQuote] = useState<Repair[]>([]);
+  const [idRepair, setIdRepair] = useState<Number>(0);
+  const [pieceCost, setPieceCost] = useState<string>('');
 
   // Datos para editar un diagnostico
   const [customerNameQuery, setCustomerNameQuery] = useState<string>('');
@@ -78,9 +112,11 @@ export default function Page() {
   const [deviceColor, setDeviceColor] = useState<string>('');
   const [deviceType, setDeviceType] = useState<string>('');
   const [firstDescription, setFirstDescription] = useState<string>('');
+  const [finalDiagnostic, setFinalDiagnostic] = useState<string>('');
   const [devicePassword, setDevicePassword] = useState<string>('');
   const [estimatedPrice, setEstimatedPrice] = useState<string>('');
   const [technicalDiagnosis, setTechnicalDiagnosis] = useState<string>('');
+  const [idQuote, setIdQuote] = useState<number>(0);
 
   useEffect(() => {
     setNewCustomerName('');
@@ -94,6 +130,11 @@ export default function Page() {
     setNewDeviceType('');
     setNewFirstDescription('');
     setNewDevicePassword('');
+    setNewPieceCost('');
+    setNewFinalDiagnostic('');
+    setNewRepair('');
+    setNewMadeBy('');
+    setNewPass('');
 
     setCustomerName('');
     setDevice('');
@@ -109,8 +150,13 @@ export default function Page() {
     setEstimatedPrice('');
     setTechnicalDiagnosis('');
 
+    setIdQuote(0);
+    setIdRepair(0);
+    setPieceCost('');
+    setFinalDiagnostic('');
+
     setMessage('');
-  }, [isOpenNewDiagnostic, isOpenEditDiagnostic, isOpenDeleteDiagnostic]);
+  }, [isOpenNewDiagnostic, isOpenEditDiagnostic, isOpenDeleteDiagnostic, isOpenNewQuote]);
 
   // Funcion para cambiar a interfaces de Gerentes y Admins
   const onChangeAdmin = async (option : string) => {
@@ -154,87 +200,239 @@ export default function Page() {
     }
   };
 
-  // Funcion para guardar un nuevo administrador
-    const onSaveNewAdmin = async () => {
-      if (newCustomerName == '') {
-        setMessage("Introduce el nombre del cliente");
+  // Funcion para añadir precio a las reparaciones
+  const handleInputChange = (index : string, value: Number) => {
+    setInputValues({
+      ...inputValues,
+      [index]: value
+    });
+  };
+
+  // Funcion para añadir una nueva reparacion a la cotizacion
+  const onAddRepair = async (id : Number) => {
+  
+    if(id == 0) {
+      setMessage('Ingresa por lo menos alguna reparacion');
+      return;
+    }
+    setMessage('');
+  
+    for(let i=0; i < newRepairQuote.length; i++) {
+      if(id == newRepairQuote[i].id_repair) {
         return;
-      }
-
-      if (newDevice == '') {
-        setMessage("Introduce el modelo del dispositivo");
-        return;
-      }
-
-      if (newDeliveryDate == '') {
-        setMessage("Introduce el dia de entrega");
-        return;
-      }
-
-      if (newDeliveryTime == '') {
-        setMessage("Introduce la hora de entrega");
-        return;
-      }
-
-      if (newFistPayment == '') {
-        setNewFistPayment('0');
-      }
-
-      if (newDeviceBrand == '') {
-        setMessage("Introduce la marca");
-        return;
-      }
-
-      if (newDeviceColor == '') {
-        setMessage("Introduce el color del dispositivo");
-        return;
-      }
-
-      if (newFirstDescription == '') {
-        setMessage("Introduce el problema del dispositivo");
-        return;
-      }
-
-      const newDiagnostic = {
-        device: newDevice,
-        device_brand: newDeviceBrand,
-        device_color: newDeviceColor,
-        device_type: newDeviceType,
-        customer_name: newCustomerName,
-        contact_phone: newContactPhone,
-        device_password: newDevicePassword,
-        first_payment: Number(newFistPayment),
-        previous_diagnosis: newFirstDescription,
-        technical_diagnosis: '',
-        estimated_price: 0,
-        delivery_date: newDeliveryDate + " " + newDeliveryTime,
-        made_by: Number(userId)
-      }
-
-      try {
-        const response = await createDiagnostic(newDiagnostic);
-        reloadTable();
-        setNewDevice('');
-        setNewDeviceBrand('');
-        setNewDeviceColor('');
-        setNewDeviceType('');
-        setNewCustomerName('');
-        setNewContactPhone('');
-        setNewDevicePassword('');
-        setNewFistPayment('');
-        setNewFirstDescription('');
-        setNewDeliveryDate('');
-        setNewDeliveryTime('');
-        setOpenNewDiagnostic(false);
-      } catch (err) {
-        console.error(err)
       }
     }
+  
+    try {
+      const response = await getRepair(id);
+      setNewRepairQuote([...newRepairQuote, response.repair[0]])
+    } catch(err) {
+      console.error(err)
+    }
+  }
+
+  // Funcion para guardar una nueva cotizacion
+  const onSaveNewQuote = async () => {
+    if (newCustomerName == '') {
+      setMessage("Introduce el nombre del cliente");
+      return;
+    }
+  
+    if (newDevice == '') {
+      setMessage("Introduce el modelo del dispositivo");
+      return;
+    }
+
+    if (newContactPhone == '') {
+      setMessage("Introduce el numero de contacto del cliente");
+      return;
+    }
+  
+    if (newFistPayment == '') {
+      setNewFistPayment('0');
+    }
+  
+    if (newDeviceBrand == '') {
+      setMessage("Introduce la marca");
+      return;
+    }
+  
+    if (newDeviceColor == '') {
+      setMessage("Introduce el color del dispositivo");
+      return;
+    }
+
+    if (newDeviceType == '') {
+      setMessage("Introduce el tipo de dispositivo");
+      return;
+    }
+  
+    if (newFinalDiagnostic == '') {
+      setMessage('Porfavor realiza el diagnostico tecnico');
+      return;
+    }
+
+    if (newRepairQuote.length == 0) {
+      setMessage('Selecciona el tipo de reparacion a realizar');
+      return;
+    }
+
+    const repairsList = Object.entries(inputValues).map(([index, repair]) => ({
+      id_repair: Number(index),
+      piece_cost: Number(repair)
+    }));
+
+    let newRepairCost = 0
+    for(let i=0; i < repairsList.length; i++) {
+      for(let j=0; j < repairs.length; j++) {
+        if (repairsList[i].id_repair == repairs[j].id_repair) {
+          newRepairCost += repairs[j].labor_costs;
+        }
+      }
+    }
+
+    let pieceCost = 0;
+    for(let i=0; i < repairsList.length; i++) {
+      pieceCost += Number(repairsList[i].piece_cost);
+    }
+
+    let days = 0
+    for(let i=0; i < repairsList.length; i++) {
+      for(let j=0; j < repairs.length; j++) {
+        if (repairsList[i].id_repair == repairs[j].id_repair) {
+          days += repairs[j].approximate_time;
+        }
+      }
+    }
+    days = Math.ceil(days / 24)
+  
+    const newQuote = {
+      device: newDevice,
+      device_brand: newDeviceBrand,
+      device_color: newDeviceColor,
+      device_type: newDeviceType,
+      customer_name: newCustomerName,
+      contact_phone: newContactPhone,
+      device_password: newDevicePassword,
+      first_payment: Number(newFistPayment),
+      previous_diagnosis: newFirstDescription,
+      technical_diagnosis: newFinalDiagnostic,
+      repair_cost: newRepairCost,
+      piece_cost: pieceCost,
+      final_price: newRepairCost + pieceCost,
+      remaining_money: (newRepairCost + pieceCost) - Number(newPass),
+      payment_method: "",
+      status: "pendiente",
+      past_days: days,
+      made_by: Number(userId),
+
+      repairs: repairsList
+    }
+
+    try {
+      const response = await createQuote(newQuote);
+      reloadTable();
+      setNewDevice('');
+      setNewDeviceBrand('');
+      setNewDeviceColor('');
+      setNewDeviceType('');
+      setNewCustomerName('');
+      setNewContactPhone('');
+      setNewDevicePassword('');
+      setNewFistPayment('');
+      setNewFirstDescription('');
+      setNewDeliveryDate('');
+      setNewDeliveryTime('');
+      setIdRepair(0);
+      setNewRepairQuote([]);
+      setInputValues({});
+      setOpenNewQuote(false);
+      router.push('../Quote');
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  // Funcion para guardar un nuevo diagnostico
+  const onSaveNewDiagnostic = async () => {
+    if (newCustomerName == '') {
+      setMessage("Introduce el nombre del cliente");
+      return;
+    }
+
+    if (newDevice == '') {
+      setMessage("Introduce el modelo del dispositivo");
+      return;
+    }
+
+    if (newDeliveryDate == '') {
+      setMessage("Introduce el dia de entrega");
+      return;
+    }
+
+    if (newDeliveryTime == '') {
+      setMessage("Introduce la hora de entrega");
+      return;
+    }
+
+    if (newFistPayment == '') {
+      setNewFistPayment('0');
+    }
+
+    if (newDeviceBrand == '') {
+      setMessage("Introduce la marca");
+      return;
+    }
+
+    if (newDeviceColor == '') {
+      setMessage("Introduce el color del dispositivo");
+      return;
+    }
+
+    if (newFirstDescription == '') {
+      setMessage("Introduce el problema del dispositivo");
+      return;
+    }
+
+    const newDiagnostic = {
+      device: newDevice,
+      device_brand: newDeviceBrand,
+      device_color: newDeviceColor,
+      device_type: newDeviceType,
+      customer_name: newCustomerName,
+      contact_phone: newContactPhone,
+      device_password: newDevicePassword,
+      first_payment: Number(newFistPayment),
+      previous_diagnosis: newFirstDescription,
+      technical_diagnosis: '',
+      estimated_price: 0,
+      delivery_date: newDeliveryDate + " " + newDeliveryTime,
+      made_by: Number(userId)
+    }
+
+    try {
+      const response = await createDiagnostic(newDiagnostic);
+      reloadTable();
+      setNewDevice('');
+      setNewDeviceBrand('');
+      setNewDeviceColor('');
+      setNewDeviceType('');
+      setNewCustomerName('');
+      setNewContactPhone('');
+      setNewDevicePassword('');
+      setNewFistPayment('');
+      setNewFirstDescription('');
+      setNewDeliveryDate('');
+      setNewDeliveryTime('');
+      setOpenNewDiagnostic(false);
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   // Funcion para iniciar el proceso de actualizar un diagnostico
   const onStartEditDiagnostic = async (device : string, customer_name : string) => {
     setOpenEditDiagnostic(true);
-    
 
     try {
       const response = await getDiagnostic(device, customer_name);
@@ -242,8 +440,8 @@ export default function Page() {
       setDeviceQuery(response.diagnostic[0].device);
       setCustomerName(response.diagnostic[0].customer_name);
       setDevice(response.diagnostic[0].device);
-      setDeliveryDate(response.diagnostic[0].delivery_date.split('T')[0].split('-')[2] + '-' + response.diagnostic[0].delivery_date.split('T')[0].split('-')[1] + '-' + response.diagnostic[0].delivery_date.split('T')[0].split('-')[0]);
-      setDeliveryTime(response.diagnostic[0].delivery_date.split('T')[1].split(':00')[0]);
+      setDeliveryDate(response.diagnostic[0].delivery_date.split('T')[0].split('-')[0] + '-' + response.diagnostic[0].delivery_date.split('T')[0].split('-')[1] + '-' + response.diagnostic[0].delivery_date.split('T')[0].split('-')[2]);
+      setDeliveryTime(response.diagnostic[0].delivery_date.slice(11, 16));
       setFistPayment(response.diagnostic[0].first_payment);
       setContactPhone(response.diagnostic[0].contact_phone);
       setDeviceBrand(response.diagnostic[0].device_brand);
@@ -317,7 +515,6 @@ export default function Page() {
   
     try {
       const response = await updateDiagnostic(deviceQuery, customerNameQuery, diagnostic);
-      console.log(response);
       reloadTable();
       setCustomerName('');
       setDevice('');
@@ -343,8 +540,8 @@ export default function Page() {
     setOpenDeleteDiagnotsic(true);
     try {
       const response = await getDiagnostic(device, customer_name);
-      setDevice(response.diagnostics[0].device);
-      setCustomerName(response.diagnostics[0].customer_name);
+      setDevice(response.diagnostic[0].device);
+      setCustomerName(response.diagnostic[0].customer_name);
     } catch (err) {
       console.error(err);
     }
@@ -365,12 +562,128 @@ export default function Page() {
   };
 
   // Funcion para iniciar el proceso de confirmacion de un diagnostico
-  const onStartConfirmDiagnostic = async (device : string, customer_name : string) => {
+  const onConfirmDiagnostic = async (device : string, customer_name : string) => {
     setOpenConfirmDiagnostic(true);
     try {
       const response = await getDiagnostic(device, customer_name);
-      setDevice(response.diagnostics[0].device);
-      setCustomerName(response.diagnostics[0].customer_name);
+      setDevice(response.diagnostic[0].device);
+      setCustomerName(response.diagnostic[0].customer_name);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Funcion para iniciar el proceso de crear una cotizacion
+  const onStartNewQuote = async () => {
+    setOpenConfirmDiagnostic(false);
+    setOpenNewQuote(true);
+
+    try {
+      const response = await getDiagnostic(device, customerName);
+      setNewCustomerName(response.diagnostic[0].customer_name);
+      setNewDevice(response.diagnostic[0].device);
+      setNewDeviceType(response.diagnostic[0].device_type);
+      setNewFistPayment(response.diagnostic[0].first_payment);
+      setNewDeviceBrand(response.diagnostic[0].device_brand);
+      setNewContactPhone(response.diagnostic[0].contact_phone);
+      setNewDevicePassword(response.diagnostic[0].device_password);
+      setNewPass(response.diagnostic[0].first_payment);
+      setNewFirstDescription(response.diagnostic[0].previous_diagnosis);
+      setNewDeviceColor(response.diagnostic[0].device_color);
+      setNewFinalDiagnostic(response.diagnostic[0].technical_diagnosis);
+      setNewMadeBy(response.diagnostic[0].made_by);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Funcion para finalizar el proceso de crear una cotizacion
+  const onFinallyNewQuote = async () => {
+
+    if (newDevice == '') {
+      setMessage('Introduce el nombre del dispositivo');
+      return;
+    }
+
+    if (newDeviceBrand == '') {
+      setMessage('Introduce la marca del dispositivo');
+      return;
+    }
+
+    if (newDeviceColor == '') {
+      setMessage('Introduce el color del dispositivo');
+      return;
+    }
+
+    if (newDeviceType == '') {
+      setMessage('Introduce el tipo del dispositivo');
+      return;
+    }
+
+    if (newCustomerName == '') {
+      setMessage('Introduce el nombre del cliente');
+      return;
+    }
+
+    if (newContactPhone == '') {
+      setMessage('Introduce el numero de contacto');
+      return;
+    }
+
+    if (newFinalDiagnostic == '') {
+      setMessage('Porfavor realiza el diagnostico tecnico');
+      return;
+    }
+
+    if (Number(newRepair) == 0) {
+      setMessage('Selecciona el tipo de reparacion a realizar');
+      return;
+    }
+
+    let newRepairCost = 0
+    for(let i=0; i < repairs.length; i++) {
+      if (Number(newRepair) == repairs[i].id_repair) {
+        newRepairCost = repairs[i].labor_costs;
+      }
+    }
+
+    if (newPieceCost == '') {
+      setMessage('Introduce el costo de las piezas necesarias');
+      return;
+    }
+
+    let days = 0
+    for(let i=0; i < repairs.length; i++) {
+      if (Number(newRepair) == repairs[i].id_repair) {
+        days = Math.ceil(repairs[i].approximate_time / 24);
+      }
+    }
+
+    const newQuote = {
+      device: newDevice,
+      device_brand: newDeviceBrand,
+      device_color: newDeviceColor,
+      device_type: newDeviceType,
+      customer_name: newCustomerName,
+      contact_phone: newContactPhone,
+      device_password: newDevicePassword,
+      first_payment: Number(newPass),
+      previous_diagnosis: newFirstDescription,
+      technical_diagnosis: newFinalDiagnostic,
+      repair: Number(newRepair),
+      repair_cost: newRepairCost,
+      piece_cost: Number(newPieceCost),
+      final_price: newRepairCost + Number(newPieceCost),
+      remaining_money: (newRepairCost + Number(newPieceCost)) - Number(newPass),
+      payment_method: "",
+      status: "pendiente",
+      past_days: days,
+      made_by: Number(newMadeBy)
+    }
+
+    try {
+      const response = await createQuote(newQuote);
+      router.push('../Quote')
     } catch (err) {
       console.error(err);
     }
@@ -384,7 +697,7 @@ export default function Page() {
         <div className="bodyMainDiagnostic" style={{flexDirection: 'column'}}>
 
           <div className="titleDiagnostic">
-            <h1>Diagnosticos</h1>
+            <h1>Cotizaciones</h1>
           </div>
 
           <div className='searchDivDiagnostic'>
@@ -396,7 +709,7 @@ export default function Page() {
             ></input>
           </div>
 
-          <TableDiagnostic key={tableKey} search={search} onStartConfirmDiagnostic={onStartConfirmDiagnostic} onStartEditDiagnostic={onStartEditDiagnostic} onStartDeleteDiagnostic={onStartDeleteDiagnostic}/>
+          <TableDiagnostic key={tableKey} search={search} onConfirmDiagnostic={onConfirmDiagnostic} onStartEditDiagnostic={onStartEditDiagnostic} onStartDeleteDiagnostic={onStartDeleteDiagnostic}/>
 
           <div className='buttonsDiagnostic'>
             <div className='buttonDiagnostic' onClick={() => setOpenNewDiagnostic(true)}>
@@ -506,7 +819,106 @@ export default function Page() {
           </div> : undefined}
         
 
-        <button onClick={() => onSaveNewAdmin()} className='buttonPopUp'>Generar diagnostico</button>
+        <button onClick={() => onSaveNewDiagnostic()} className='buttonPopUp'>Generar diagnostico</button>
+      </Modal>
+
+      <Modal isOpen={isOpenNewQuote} onClose={() => setOpenNewQuote(false)}>
+        <div className='titlePopUp' style={{background: '#8C52FF'}}>
+          <h2>Nueva Cotizacion</h2>
+        </div>
+
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          <input 
+            value={newCustomerName}
+            onChange={(e) => setNewCustomerName(e.target.value)}
+            placeholder='Nombre:' 
+            className='inputPopUp'
+          ></input>
+
+          <input 
+            value={newDevice}
+            onChange={(e) => setNewDevice(e.target.value)}
+            placeholder='Dispositivo:' 
+            className='inputPopUp'
+          ></input>
+        </div>
+
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          <input 
+            value={newDeviceBrand}
+            onChange={(e) => setNewDeviceBrand(e.target.value)}
+            placeholder='Marca del dispositivo:' 
+            className='inputPopUp'
+          ></input>
+
+          <input 
+            value={newContactPhone}
+            onChange={(e) => setNewContactPhone(e.target.value)}
+            placeholder='Telefono de contacto:' 
+            className='inputPopUp'
+          ></input>
+        </div>
+
+        <input 
+          value={newDeviceColor}
+          onChange={(e) => setNewDeviceColor(e.target.value)}
+          placeholder='Color del dispositivo:' 
+          className='inputPopUp'
+        ></input>
+
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          <input 
+            value={newPass}
+            onChange={(e) => setNewPass(e.target.value)}
+            placeholder='Abono:' 
+            className='inputPopUp'
+          ></input>
+
+          <select value={newDeviceType} onChange={(e) => setNewDeviceType(e.target.value)} className='inputPopUp'>
+            <option value={''}>Tipo de dispositivo:</option>
+            <option value={'Celular'}>Celular</option>
+            <option value={'Laptop'}>Laptop</option>
+            <option value={'Patin'}>Patin</option>
+            <option value={'Bicicleta'}>BIcicleta</option>
+          </select><br/>
+        </div>
+
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          <select onChange={(e) => setIdRepair(Number(e.target.value))} className='inputPopUp'>
+            <option value={0}>Tipo de reparacion:</option>
+            {repairs.map((repair, index) => (
+              <option value={repair.id_repair} key={index}>{repair.name}</option>
+            ))}
+          </select><br/>
+
+          <button onClick={() => onAddRepair(idRepair)} className='buttonAddPopUp'>Añadir</button>
+        </div>
+
+        {newRepairQuote.map((repair, index) => (
+          <div key={index} style={{display: 'flex', flexDirection: 'row'}}>
+            <p>{repair.name}</p>
+            <input
+              value={inputValues[repair.id_repair] || ''}
+              onChange={(e) => handleInputChange(String(repair.id_repair), Number(e.target.value))}
+              className='inputPopUp'
+              placeholder='Costo de la reparacion'
+            ></input>
+          </div>
+        ))}
+
+        <textarea
+          value={newFinalDiagnostic}
+          onChange={(e) => setNewFinalDiagnostic(e.target.value)}
+          placeholder='Diagnostico final:' 
+          className='inputPopUp'
+        ></textarea>
+
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onSaveNewQuote()} className='buttonPopUp'>Confirmar</button>
       </Modal>
 
       <Modal isOpen={isOpenConfirmDiagnostic} onClose={() => setOpenConfirmDiagnostic(false)}>
@@ -516,7 +928,7 @@ export default function Page() {
 
         <p>Desea iniciar el proceso para realizar una cotizacion</p>
 
-        <button onClick={() => console.log("Iniciar cotizacion")} className='buttonPopUp' style={{background: '#DAFFAB'}}>Confirmar</button>
+        <button onClick={() => onStartNewQuote()} className='buttonPopUp' style={{background: '#DAFFAB'}}>Confirmar</button>
       </Modal>
 
       <Modal isOpen={isOpenEditDiagnostic} onClose={() => setOpenEditDiagnostic(false)}>
@@ -542,6 +954,7 @@ export default function Page() {
 
         <div style={{display: 'flex', flexDirection: 'row'}}>
           <input 
+            type='date'
             value={deliveryDate}
             min={new Date().toISOString().split('T')[0]}
             onChange={(e) => setDeliveryDate(e.target.value)}
@@ -550,6 +963,7 @@ export default function Page() {
           ></input>
 
           <input 
+            type='time'
             value={deliveryTime}
             onChange={(e) => setDeliveryTime(e.target.value)}
             placeholder='Hora de entrega:' 
@@ -607,6 +1021,13 @@ export default function Page() {
         </div>
 
         <textarea
+          value={firstDescription}
+          onChange={(e) => setFirstDescription(e.target.value)}
+          placeholder='Descripcion inicial:' 
+          className='inputPopUp'
+        ></textarea>
+
+        <textarea
           value={technicalDiagnosis}
           onChange={(e) => setTechnicalDiagnosis(e.target.value)}
           placeholder='Descripcion tecnica:' 
@@ -619,7 +1040,7 @@ export default function Page() {
           </div> : undefined}
         
 
-        <button onClick={() => onFinallyEditDiagnostic()} className='buttonPopUp'>Generar diagnostico</button>
+        <button onClick={() => onFinallyEditDiagnostic()} className='buttonPopUp'>Guardar Cambios</button>
       </Modal>
 
       <Modal isOpen={isOpenDeleteDiagnostic} onClose={() => setOpenDeleteDiagnotsic(false)}>
