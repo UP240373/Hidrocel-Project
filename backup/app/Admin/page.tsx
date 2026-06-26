@@ -3,7 +3,7 @@
 'use client'
 
 // Importanciones para la pagina
-import { verifyManager } from '../API/api';
+import { verify, verifyManager } from '../API/api';
 import { getAdmin, createAdmin, updateAdmin, deleteAdmin } from '../API/Admin/api';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -34,6 +34,7 @@ export default function Page() {
   const [isOpenRepairs, setOpenRepairs] = useState(false);
   const [isOpenContability, setOpenContability] = useState(false);
   const [isOpenAdmins, setOpenAdmins] = useState(false);
+  const [isOpenHistory, setOpenHistory] = useState(false);
 
   // Contraseña temporal de admin y gerente
   const [passwordAdmin, setPasswordAdmin] = useState('');
@@ -102,6 +103,19 @@ export default function Page() {
 
     if (option === "contability") {
       console.log("seleccionaste contabilidad");
+    }
+
+    if (option === "history") {
+      try {
+        const response = await verify(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("./History");
+      } catch (err) {
+        console.error(err)
+      }
     }
   };
 
@@ -281,7 +295,7 @@ export default function Page() {
 
         </div>
 
-        <SideBar isUseRepairs={false} isUseContability={false} isUseAdmins={true} isOpenRepairs={setOpenRepairs} isOpenContability={setOpenContability} isOpenAdmins={setOpenAdmins}/>
+        <SideBar isUseRepairs={false} isUseContability={false} isUseAdmins={true} isUseHistory={false} isOpenRepairs={setOpenRepairs} isOpenContability={setOpenContability} isOpenAdmins={setOpenAdmins} isOpenHistory={setOpenHistory}/>
       </div>
 
       <Modal isOpen={isOpenNewAdmin} onClose={() => setOpenNewAdmin(false)}>
@@ -425,6 +439,27 @@ export default function Page() {
 
         <button onClick={() => console.log("aceptar contabilidad")} className='buttonPopUp'>Continuar</button>
       </Modal>
+
+      <Modal isOpen={isOpenHistory} onClose={() => setOpenHistory(false)}>
+        <div className='titlePopUp'>
+          <h2>Contraseña</h2>
+        </div>
+
+        <input 
+          value={passwordAdmin}
+          onChange={(e) => setPasswordAdmin(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
+
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("history")} className='buttonPopUp'>Continuar</button>
+      </Modal>
+
     </div>
   );
 }

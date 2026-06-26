@@ -1,16 +1,15 @@
 
 // Importanciones para la pagina
-import { getQuotes } from '@/app/API/Quote/api';
+import { getHistory } from '@/app/API/History/api';
 import { useState, useEffect } from 'react';
-import './tableQuote.css';
+import './tableHistory.css';
 
 interface TableQuoteProps {
   search: string,
   filter: string,
 
-  onSeeQuote: (id :number) => void;
-  onStartEditQuote: (id :number) => void;
-  onStartFinallyQuote: (id : number) => void;
+  onSeeOneHistory: (id :number) => void;
+  onStartApplyWarranty: (id :number) => void;
 }
 
 // Estructura para cotizacion
@@ -38,7 +37,7 @@ interface Quote {
   madeBy: Number
 }
 
-export default function Page({ search, filter, onSeeQuote, onStartEditQuote, onStartFinallyQuote } : TableQuoteProps) {
+export default function Page({ search, filter, onSeeOneHistory, onStartApplyWarranty } : TableQuoteProps) {
 
   // Lista con todas las cotizaciones hechas en el sistema
   const [quotes, setQuotes] = useState<Quote[]>([]);
@@ -52,14 +51,15 @@ export default function Page({ search, filter, onSeeQuote, onStartEditQuote, onS
   quotesFilter = filter != 'Todos' ? quotesFilter.filter(quote => quote.device_type.toLowerCase().includes(filter.toLowerCase())) : quotesFilter;
 
   // Funcion para obtener todas las cotizaciones
-  const onGetQuotes = async () => {
-    try {
-      const response = await getQuotes();
-      setQuotes(response.quotes);
-    } catch(err) {
-      console.error(err);
-    }
-  };
+    const onGetQuotes = async () => {
+      try {
+        const response = await getHistory();
+        console.log(response)
+        setQuotes(response.quotes);
+      } catch(err) {
+        console.error(err);
+      }
+    };
 
   return (
     <div className='tableMain'>
@@ -80,16 +80,12 @@ export default function Page({ search, filter, onSeeQuote, onStartEditQuote, onS
             </div>
 
             <div className='buttonDiv'>
-              <div className='buttonInfoSee' onClick={() => onSeeQuote(Number(quote.id_quote))}>
+              <div className='buttonInfoSee' onClick={() => onSeeOneHistory(Number(quote.id_quote))}>
                 <p>Ver</p>
               </div>
 
-              <div className='buttonInfoFinally' onClick={() => onStartFinallyQuote(Number(quote.id_quote))}>
-                <p>Finalizar</p>
-              </div>
-
-              <div className='buttonInfoEdit' onClick={() => onStartEditQuote(Number(quote.id_quote))}>
-                <p>Editar</p>
+              <div className='buttonInfoFinally' onClick={() => onStartApplyWarranty(Number(quote.id_quote))}>
+                <p>Aplicar Garantia</p>
               </div>
             </div>
           </div>

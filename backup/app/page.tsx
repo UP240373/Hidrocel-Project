@@ -25,6 +25,7 @@ export default function Home() {
   const [isOpenRepairs, setOpenRepairs] = useState(false);
   const [isOpenContability, setOpenContability] = useState(false);
   const [isOpenAdmins, setOpenAdmins] = useState(false);
+  const [isOpenHistory, setOpenHistory] = useState(false);
 
   // Mensajes de errores y soluciones
   const [message, setMessage] = useState<string>('');
@@ -36,7 +37,7 @@ export default function Home() {
     setPassword('');
 
     setMessage('');
-    }, [isOpenDiagnostic, isOpenQuote, isOpenAdmins, isOpenContability, isOpenRepairs]);
+    }, [isOpenDiagnostic, isOpenQuote, isOpenAdmins, isOpenHistory, isOpenContability, isOpenRepairs]);
 
   // Funcion para cambiar a diagnostico y cotizacion
   const onChangeAction = async (option : string) => {
@@ -141,6 +142,19 @@ export default function Home() {
       }
     }
 
+    if (option === "history") {
+      try {
+        const response = await verify(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("./History");
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
   }
 
   return (
@@ -203,7 +217,7 @@ export default function Home() {
           </div>
         </div>
         
-        <SideBar isUseRepairs={false} isUseContability={false} isUseAdmins={false} isOpenRepairs={setOpenRepairs} isOpenContability={setOpenContability} isOpenAdmins={setOpenAdmins}/>
+        <SideBar isUseRepairs={false} isUseContability={false} isUseAdmins={false} isUseHistory={false} isOpenRepairs={setOpenRepairs} isOpenContability={setOpenContability} isOpenAdmins={setOpenAdmins} isOpenHistory={setOpenHistory}/>
       </div>
 
       <Modal isOpen={isOpenDiagnostic} onClose={() => setOpenDiagnostic(false)}>
@@ -294,6 +308,26 @@ export default function Home() {
           </div> : undefined}
 
         <button onClick={() => onChangeAdmin("administrators")} className='buttonPopUp'>Continuar</button>
+      </Modal>
+
+      <Modal isOpen={isOpenHistory} onClose={() => setOpenHistory(false)}>
+        <div className='titlePopUp'>
+          <h2>Contraseña</h2>
+        </div>
+
+        <input 
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
+
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("history")} className='buttonPopUp'>Continuar</button>
       </Modal>
 
     </main>

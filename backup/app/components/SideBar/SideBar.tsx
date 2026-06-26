@@ -5,18 +5,21 @@ import Image from 'next/image';
 import engranaje from '@/image/engranaje.png';
 import iconContability from '@/image/icon-contability.png';
 import iconAdmins from '@/image/icon-admins.png';
+import iconHistory from '@/image/icon-history.png';
 
 // Estructura de datos para las props
 interface SideBarProps {
   isUseRepairs: boolean;
   isUseContability: boolean;
   isUseAdmins: boolean;
+  isUseHistory: boolean;
   
   isOpenRepairs: (value: boolean) => void;
   isOpenContability: (value: boolean) => void;
   isOpenAdmins: (value: boolean) => void;
+  isOpenHistory: (value: boolean) => void;
 }
-const SideBar = ({ isUseRepairs, isUseContability, isUseAdmins, isOpenRepairs, isOpenContability, isOpenAdmins } : SideBarProps) => {
+const SideBar = ({ isUseRepairs, isUseContability, isUseAdmins, isUseHistory, isOpenRepairs, isOpenContability, isOpenAdmins, isOpenHistory } : SideBarProps) => {
   
   return (
     <div className="bodySideBar">
@@ -43,6 +46,16 @@ const SideBar = ({ isUseRepairs, isUseContability, isUseAdmins, isOpenRepairs, i
       <div className="bottonActiveSideBar" onClick={() => isOpenAdmins(true)}>
         <Image  width={30} src={iconAdmins} alt="" className="imgSideBar"/>
         <p>Administradores</p>
+      </div>}
+
+      {isUseHistory ? 
+      <div className="bottonInactiveSideBar">
+        <Image  width={30} src={iconAdmins} alt="" className="imgSideBar"/>
+        <p>Historial</p>
+      </div> : 
+      <div className="bottonActiveSideBar" onClick={() => isOpenHistory(true)}>
+        <Image  width={30} src={iconHistory} alt="" className="imgSideBar"/>
+        <p>Historial</p>
       </div>}
       
     </div>

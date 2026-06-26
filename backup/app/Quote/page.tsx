@@ -3,9 +3,11 @@
 'use client'
 
 // Importanciones para la pagina
-import { verifyManager, verifyAdmin } from '../API/api';
+import { verify, verifyManager, verifyAdmin } from '../API/api';
+import { addHistory } from '../API/History/api';
 import { getQuote, createQuote, updateQuote } from '../API/Quote/api';
 import { getRepairs, getRepair } from '../API/Repair/api';
+import { getAdmin } from '../API/Admin/api';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -16,7 +18,6 @@ import Header from '.././components/Header/Header';
 import SideBar from '.././components/SideBar/SideBar';
 import TableQuote from '@/app/components/Tables/tableQuote/tableQuote';
 import './quote.css';
-import { getAdmin } from '../API/Admin/api';
 
 interface Repair {
   id_repair: number,
@@ -66,6 +67,7 @@ export default function Page() {
   const [isOpenRepairs, setOpenRepairs] = useState(false);
   const [isOpenContability, setOpenContability] = useState(false);
   const [isOpenAdmins, setOpenAdmins] = useState(false);
+  const [isOpenHistory, setOpenHistory] = useState(false);
 
   // Contraseña temporal de admin y gerente
   const [passwordAdmin, setPasswordAdmin] = useState('');
@@ -121,7 +123,6 @@ export default function Page() {
   const [deliveryDate, setDeliveryDate] = useState<string>('');
   const [madeBy, setMadeBy] = useState<string>('');
   
-
   useEffect(() => {
     setNewCustomerName('');
     setNewDevice('');
@@ -189,6 +190,19 @@ export default function Page() {
           return;
         }
         router.push("./Admin");
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    if (option === "history") {
+      try {
+        const response = await verify(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("./History");
       } catch (err) {
         console.error(err)
       }
@@ -446,6 +460,27 @@ export default function Page() {
     try {
       const response = await getQuote(id);
       setIdQuote(response.quote[0].id_quote);
+      setDevice(response.quote[0].device);
+      setDeviceBrand(response.quote[0].device_brand);
+      setDeviceColor(response.quote[0].device_color);
+      setDeviceType(response.quote[0].device_type);
+      setCustomerName(response.quote[0].customer_name);
+      setContactPhone(response.quote[0].contact_phone);
+      setFirstPayment(response.quote[0].first_payment);
+      setFirstDiagnostic(response.quote[0].previous_diagnosis);
+      setFinalDiagnostic(response.quote[0].technical_diagnosis);
+
+      const repairs : string[] = [];
+      for (let i = 0; i < response.repairs.length; i++) {
+        const result = await getRepair(Number(response.repairs[i]));
+        repairs.push(result.repair[0].name)
+      }
+      setRepair(repairs.join(', '));
+
+      setRepairCost(response.quote[0].repair_cost)
+      setPieceCost(response.quote[0].piece_cost);
+      setFinalPrice(response.quote[0].final_price);
+      setRemainingMoney(response.quote[0].remaining_money);
     } catch (err) {
       console.error(err);
     }
@@ -454,15 +489,51 @@ export default function Page() {
   // Funcion para finalizar el proceso de eliminacion de una cotizacion
   const onFinallyEndQuote = async (id : number) => {
 
-    const newQuote = {
-      payment_method: newPaymentMethod
+    console.log(paymentMethod)
+
+    if(newPaymentMethod == '') {
+      setMessage('Selecciona el metodo de pago');
+      return;
+    }
+
+    const newHistory = {
+      id_quote: idQuote,
+      device: device,
+      device_brand: deviceBrand,
+      device_color: deviceColor,
+      device_type: deviceType,
+      customer_name: customerName,
+      contact_phone: contactPhone,
+      first_payment: Number(firstPayment),
+      previous_diagnosis: firstDiagnostic,
+      technical_diagnosis: finalDiagnostic,
+      repairs: repair,
+      repair_cost: Number(repairCost),
+      piece_cost: Number(pieceCost),
+      final_price: Number(finalPrice),
+      is_paid: true,
+      payment_method: newPaymentMethod,
+      status: "completado"
     }
 
     try {
-      console.log(newQuote);
-      //const response = await getQuote(id);
+      const response = await addHistory(newHistory);
+      console.log(response)
       reloadTable();
       setIdQuote(0);
+      setDevice('');
+      setDeviceBrand('');
+      setDeviceColor('');
+      setDeviceType('');
+      setCustomerName('');
+      setContactPhone('');
+      setFirstPayment('');
+      setFirstDiagnostic('');
+      setFinalDiagnostic('');
+      setRepair('');
+      setRepairCost('')
+      setPieceCost('');
+      setFinalPrice('');
       setNewPaymentMethod('');
       setOpenFinallyQuote(false);
     } catch (err) {
@@ -512,7 +583,7 @@ export default function Page() {
 
         </div>
 
-        <SideBar isUseRepairs={false} isUseContability={false} isUseAdmins={false} isOpenRepairs={setOpenRepairs} isOpenContability={setOpenContability} isOpenAdmins={setOpenAdmins}/>
+        <SideBar isUseRepairs={false} isUseContability={false} isUseAdmins={false} isUseHistory={false} isOpenRepairs={setOpenRepairs} isOpenContability={setOpenContability} isOpenAdmins={setOpenAdmins} isOpenHistory={setOpenHistory}/>
       </div>
 
       <Modal isOpen={isOpenNewQuote} onClose={() => setOpenNewQuote(false)}>
@@ -737,9 +808,12 @@ export default function Page() {
 
         <p>¿Deseas finalizar su cotizacion?</p>
 
+        <p>Cantidad a pagar: {remainingMoney}</p>
+
         <select value={newPaymentMethod} onChange={(e) => setNewPaymentMethod(e.target.value)} className='inputPopUp'>
           <option value={''}>Metodo de pago:</option>
-          <option value={'Tarjeta'}>Tarjeta</option>
+          <option value={'Tarjeta de credito'}>Tarjeta de credito</option>
+          <option value={'Tarjeta de debito'}>Tarjeta de debito</option>
           <option value={'Efectivo'}>Efectivo</option>
         </select><br/>
 
@@ -828,6 +902,26 @@ export default function Page() {
           </div> : undefined}
 
         <button onClick={() => onChangeAdmin("administrators")} className='buttonPopUp'>Continuar</button>
+      </Modal>
+
+      <Modal isOpen={isOpenHistory} onClose={() => setOpenHistory(false)}>
+        <div className='titlePopUp'>
+          <h2>Contraseña</h2>
+        </div>
+
+        <input 
+          value={passwordAdmin}
+          onChange={(e) => setPasswordAdmin(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
+
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("history")} className='buttonPopUp'>Continuar</button>
       </Modal>
 
     </div>

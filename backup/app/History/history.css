@@ -1,0 +1,75 @@
+
+.mainHistory {
+  font-family: "Arial Narrow", Arial, sans-serif;
+}
+
+.bodyHistory {
+  display: flex;
+  flex-direction: row;
+  height: 89vh;
+  margin: 0.7% -0.7% 0;
+}
+
+.bodyMainHistory {
+  width: 162vh;
+}
+
+.titleHistory {
+  width: 70vh;
+  height: 7vh;
+  text-align: center;
+  margin: 1% 2%;
+  border-bottom: 2px solid black;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.searchDivHistory {
+  margin: 5% 2% 0;
+  padding: 1%;
+  align-items: center;
+  font-weight: bold;
+  font-size: 20;
+}
+
+.searchHistory {
+  width: 80vh;
+  margin: 0 1%;
+  padding: 1%;
+  border: 1px solid black;
+  border-radius: 15;
+}
+
+.filterHistory {
+  width: 30vh;
+  margin: 0 5%;
+  padding: 1%;
+  background: #B7CDFF;
+  border: 1px solid black;
+  border-radius: 15;
+}
+
+.buttonsHistory {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  margin: 3% 1% 0;
+}
+
+.buttonHistory {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 30vh;
+  background: #B7CDFF;
+  border-radius: 20;
+}
+
+.buttonHistory:hover {
+  cursor: pointer;
+  background: #c1d4ff;
+}
+
+.buttonHistory:active {
+  transform: translate(1px, 1px);
+}
