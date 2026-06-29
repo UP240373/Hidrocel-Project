@@ -81,8 +81,11 @@ router.post('/', (req, res) => {
       const queryDelete = `DELETE FROM diagnostics WHERE device = "${device}" AND customer_name = "${customer_name}"`;
       db.query(queryDelete, (err, result) => {});
 
-      logger.createQuote(req.body, req.body.id, req.ip, req.headers['user-agent']);
-      res.status(201).json({ message: "The quote has been created successfully" });
+      const find = `SELECT * FROM quotes WHERE device = "${device}" AND customer_name = "${customer_name}"`;
+      db.query(find, (err, quoteFind) => {
+        logger.createQuote(req.body, req.body.id, req.ip, req.headers['user-agent']);
+        res.status(201).json({ message: "The quote has been created successfully", id_quote: quoteFind[0].id_quote });
+      });
     })
   });
 });

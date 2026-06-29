@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "setup": "npm run setup:backend && npm run setup:frontend",
-    "setup:backend": "mysql -u root -p < sql/init.sql && npm init -y && npm install express && npm install mysql2 && npm install dotenv && npm install cors && cd \"backend\" && npm install && npm install --save-dev concurrently",
+    "setup:backend": "mysql -u root -p < sql/init.sql && npm init -y && npm install express && npm install mysql2 && npm install dotenv && npm install cors && cd \"backend\" && npm install && npm install --save-dev concurrently && npm install nodemailer multer && npm install pdfkit express multer",
     "setup:frontend": "mkdir frontend && cd frontend && npx create-next-app@latest . --src-dir --typescript --tailwind --app && cd .. && if exist frontend\\src rmdir /s /q frontend\\src && xcopy backup frontend\\src /e /i /y",
     "project": "concurrently \"npm run frontend\" \"npm run backend\"",
     "backend": "node backend/endpoints.js",

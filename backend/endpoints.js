@@ -15,6 +15,7 @@ const repairsEndpoints = require('./routes/repairs');
 const diagnosticsEndpoints = require('./routes/diagnostics');
 const quoteEndpoints = require('./routes/quote');
 const historyEndpoints = require('./routes/history');
+const sendTicket = require('./routes/send');
 
 // ============ CONFIGURACIÓN ============
 const app = express();
@@ -49,6 +50,7 @@ app.use('/repair', repairsEndpoints);
 app.use('/diagnostic', diagnosticsEndpoints);
 app.use('/quote', quoteEndpoints);
 app.use('/history', historyEndpoints);
+app.use('/send', sendTicket);
 
 // ============ SERVIDOR NEXT.JS ============
 // Servir archivos estáticos de Next.js

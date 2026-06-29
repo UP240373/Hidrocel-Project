@@ -18,6 +18,14 @@ interface diagnostic {
   made_by: Number
 }
 
+// Estructura para un correo
+interface email {
+  to: string,
+  subject: string,
+  message: string,
+  attachments: string[]
+}
+
 // Obtener todos los diagnosticos
 export const getDiagnostics = async () => {
   try {
@@ -105,3 +113,38 @@ export const deleteDiagnostic = async (device: string, customer_name : string) =
     console.error("Algo salio mal", err)
   }
 };
+
+// Crear nota de remision
+export const createNote = async (id : number) => {
+  try {
+    const response = await fetch(`${API}/send/notes/${id}`, {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    const data = response.json();
+    return data;
+  }
+  catch (err) {
+    console.error("Algo salio mal", err)
+  }
+}
+
+// Enviar nota de remision
+export const sendEmail = async (cuerpo : email) => {
+  try {
+    const response = await fetch(`${API}/send/email`, {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(cuerpo)
+    })
+    const data = response.json();
+    return data;
+  }
+  catch (err) {
+    console.error("Algo salio mal", err)
+  }
+}

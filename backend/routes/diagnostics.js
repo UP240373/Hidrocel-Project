@@ -42,7 +42,7 @@ router.get('/query', (req, res) => {
 
 // POST /diagnostic = Endpoint para crear un nuevo diagnostico
 router.post('/', (req, res) => {
-  const { device, device_brand, device_color, device_type, customer_name, contact_phone, device_password, first_payment, previous_diagnosis, technical_diagnosis, estimated_price, delivery_date, made_by } = req.body;
+  const { device, device_brand, device_color, device_type, customer_name, contact_phone, email, device_password, first_payment, previous_diagnosis, technical_diagnosis, estimated_price, delivery_date, made_by } = req.body;
 
   const filter = `SELECT * FROM diagnostics WHERE device = "${device}" AND customer_name = "${customer_name}"`;
   db.query(filter, (err, result) => {
@@ -56,7 +56,7 @@ router.post('/', (req, res) => {
       return res.status(409).json({ err: "The diagnostic already exists"});
     }
 
-    const query = `INSERT INTO diagnostics (device, device_brand, device_color, device_type, customer_name, contact_phone, device_password, first_payment, previous_diagnosis, technical_diagnosis, estimated_price, delivery_date, made_by) VALUES ("${device}", "${device_brand}", "${device_color}", "${device_type}", "${customer_name}", "${contact_phone}", "${device_password}", "${first_payment}", "${previous_diagnosis}", "${technical_diagnosis}", "${estimated_price}", STR_TO_DATE('${delivery_date}', '%Y-%m-%d %H:%i'), "${made_by}");`;
+    const query = `INSERT INTO diagnostics (device, device_brand, device_color, device_type, customer_name, contact_phone, email, device_password, first_payment, previous_diagnosis, technical_diagnosis, estimated_price, delivery_date, made_by) VALUES ("${device}", "${device_brand}", "${device_color}", "${device_type}", "${customer_name}", "${contact_phone}", "${email}", "${device_password}", "${first_payment}", "${previous_diagnosis}", "${technical_diagnosis}", "${estimated_price}", STR_TO_DATE('${delivery_date}', '%Y-%m-%d %H:%i'), "${made_by}");`;
     db.query(query, (err, diagnostic) => {
       if (err) {
         logger.error('CREATE_DIAGNOSTIC', err, req.ip);

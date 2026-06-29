@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 14, 2026 at 06:50 PM
+-- Generation Time: Jun 29, 2026 at 07:24 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -61,6 +61,7 @@ CREATE TABLE `diagnostics` (
   `device_type` varchar(100) NOT NULL,
   `customer_name` varchar(100) NOT NULL,
   `contact_phone` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL,
   `device_password` varchar(100) NOT NULL,
   `first_payment` int(11) NOT NULL,
   `previous_diagnosis` text NOT NULL,
@@ -74,8 +75,43 @@ CREATE TABLE `diagnostics` (
 -- Dumping data for table `diagnostics`
 --
 
-INSERT INTO `diagnostics` (`device`, `device_brand`, `device_color`, `device_type`, `customer_name`, `contact_phone`, `device_password`, `first_payment`, `previous_diagnosis`, `technical_diagnosis`, `estimated_price`, `delivery_date`, `made_by`) VALUES
-('Iphone 16 pro', 'Apple', 'Rosa', '', 'Pato', 0, '', 0, 'Dura muy poco la bateria', '', 0, '2026-06-08 02:30:00', '3');
+INSERT INTO `diagnostics` (`device`, `device_brand`, `device_color`, `device_type`, `customer_name`, `contact_phone`, `email`, `device_password`, `first_payment`, `previous_diagnosis`, `technical_diagnosis`, `estimated_price`, `delivery_date`, `made_by`) VALUES
+('Iphone 16 pro', 'Apple', 'Rosa', '', 'Pato', 0, '', '', 0, 'Dura muy poco la bateria', '', 0, '2026-06-08 02:30:00', '3');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `history_quotes`
+--
+
+CREATE TABLE `history_quotes` (
+  `id_quote` int(11) NOT NULL,
+  `device` varchar(100) NOT NULL,
+  `device_brand` varchar(100) NOT NULL,
+  `device_color` varchar(50) NOT NULL,
+  `device_type` varchar(100) NOT NULL,
+  `customer_name` varchar(100) NOT NULL,
+  `contact_phone` int(11) NOT NULL,
+  `first_payment` int(11) NOT NULL,
+  `previous_diagnosis` text NOT NULL,
+  `technical_diagnosis` text NOT NULL,
+  `repairs` text NOT NULL,
+  `repair_cost` text NOT NULL,
+  `piece_cost` text NOT NULL,
+  `final_price` int(11) NOT NULL,
+  `is_paid` tinyint(1) NOT NULL,
+  `payment_method` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `delivery_date` datetime NOT NULL,
+  `is_deleted` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `history_quotes`
+--
+
+INSERT INTO `history_quotes` (`id_quote`, `device`, `device_brand`, `device_color`, `device_type`, `customer_name`, `contact_phone`, `first_payment`, `previous_diagnosis`, `technical_diagnosis`, `repairs`, `repair_cost`, `piece_cost`, `final_price`, `is_paid`, `payment_method`, `status`, `delivery_date`, `is_deleted`) VALUES
+(1, 'Iphone 15 pro max', 'Iphone', 'Rosa', 'Celular', 'Maria', 2147483647, 200, 'El telefono no carga', 'El modulo de carga esta dañado', 'Cambio de puerto de carga, Limpieza profunda', '150', '900', 1050, 1, 'Tarjeta de debito', 'completado', '2026-06-21 01:46:00', 0);
 
 -- --------------------------------------------------------
 
@@ -115,7 +151,13 @@ INSERT INTO `quotes` (`id_quote`, `device`, `device_brand`, `device_color`, `dev
 (4, 'Oppo Reno 14f', 'OPPO', 'Azul Cian', 'Celular', 'Olivia', 2147483647, '', 0, '', 'Cambio completo del modulo de carga', 200, 400, 600, 600, '', 'pendiente', '2026-06-08 11:52:00', 3, 0),
 (5, 'Iphone 17 pro', 'Iphone', 'Rosa', 'Celular', 'Santana', 2147483647, '', 500, 'El telefono no enciende', 'El modulo de carga esta dañado y la pantalla contiene una fisura', 350, 1400, 1750, 1250, '', 'pendiente', '2026-06-16 06:38:00', 1, 0),
 (6, 'Fold 4', 'Samsung', 'Azul', 'Celular', 'Mariano', 2147483647, '', 0, '', 'Pantalla rota', 250, 820, 1070, 770, '', 'pendiente', '2026-06-14 08:51:00', 3, 0),
-(7, 'Flip 5', 'Samsung', 'Verde', 'Celular', 'Josue', 2147483647, '123456', 100, 'Limpiar el puerto de carga', 'El puerto de carga esta dañado, fue necesario cambiarlo', 200, 150, 350, 250, '', 'pendiente', '2026-06-14 20:42:00', 3, 0);
+(7, 'Flip 5', 'Samsung', 'Verde', 'Celular', 'Josue', 2147483647, '123456', 100, 'Limpiar el puerto de carga', 'El puerto de carga esta dañado, fue necesario cambiarlo', 200, 150, 350, 250, '', 'pendiente', '2026-06-14 20:42:00', 3, 0),
+(8, 'Iphone 14 mini', 'Apple', 'Blanco', 'Celular', 'Pablito', 2147483647, '123', 100, 'La pantalla no enciende', 'Cambio de modulo de pantalla - $1000\nLimpieza - $100', 250, 1100, 1350, 1250, '', 'pendiente', '2026-06-28 18:11:00', 3, 0),
+(9, 'ASUS TUF 16', 'ASUS', 'Negro', 'Laptop', 'Angelito', 1234567, '', 0, 'No enciende', 'Cambio de puerto de carga - $1500', 200, 1500, 1700, 1700, '', 'pendiente', '2026-06-28 18:13:00', 3, 0),
+(10, 'Macbook 13', 'Apple', 'Verde', 'Laptop', 'Arturo', 2147483647, 'Gaby', 1000, 'Pantalla estrellada', 'Cambio total de pantalla - $3000', 150, 3000, 3150, 2150, '', 'pendiente', '2026-06-28 18:17:00', 3, 0),
+(11, 'Tab s6 lite', 'Samsung', 'Negro', 'Tablet', 'Gaby', 2147483647, '', 0, 'No carga', 'Cambio de puerto de carga - $300', 200, 300, 500, 500, '', 'pendiente', '2026-06-28 18:20:00', 3, 0),
+(12, 'Tab S9 plus', 'Samsung', 'Blanco', 'Tablet', 'Mark', 2147483647, '', 1000, 'No enciende', 'Cambio de pantalla - $2000', 150, 2000, 2150, 1150, '', 'pendiente', '2026-06-28 18:46:00', 3, 0),
+(13, 'S25 Ultra', 'Samsung', 'Negro', 'Celular', 'Abdul', 2147483647, '3456', 0, 'No enciende la pantalla', 'Cambio de pantalla - $1000', 150, 1000, 1150, 1150, '', 'pendiente', '2026-06-28 18:53:00', 3, 0);
 
 -- --------------------------------------------------------
 
@@ -140,7 +182,14 @@ INSERT INTO `quote_repairs` (`id_quote`, `id_repair`, `piece_cost`) VALUES
 (5, 3, 600),
 (6, 1, 800),
 (6, 2, 20),
-(7, 3, 150);
+(7, 3, 150),
+(8, 1, 1000),
+(8, 2, 100),
+(9, 3, 1500),
+(10, 1, 3000),
+(11, 3, 300),
+(12, 1, 2000),
+(13, 1, 1000);
 
 -- --------------------------------------------------------
 
@@ -181,6 +230,12 @@ ALTER TABLE `administrators`
   ADD PRIMARY KEY (`id_admin`);
 
 --
+-- Indexes for table `history_quotes`
+--
+ALTER TABLE `history_quotes`
+  ADD PRIMARY KEY (`id_quote`);
+
+--
 -- Indexes for table `quotes`
 --
 ALTER TABLE `quotes`
@@ -211,10 +266,16 @@ ALTER TABLE `administrators`
   MODIFY `id_admin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT for table `history_quotes`
+--
+ALTER TABLE `history_quotes`
+  MODIFY `id_quote` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `quotes`
 --
 ALTER TABLE `quotes`
-  MODIFY `id_quote` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_quote` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `repairs`

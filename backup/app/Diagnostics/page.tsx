@@ -4,7 +4,7 @@
 
 // Importanciones para la pagina
 import { verify, verifyManager, verifyAdmin } from '../API/api';
-import { getDiagnostic, createDiagnostic, updateDiagnostic, deleteDiagnostic } from '../API/Diagnostic/api';
+import { getDiagnostic, createDiagnostic, updateDiagnostic, deleteDiagnostic, createNote, sendEmail } from '../API/Diagnostic/api';
 import { createQuote } from '../API/Quote/api';
 import { getRepairs, getRepair } from '../API/Repair/api';
 import { useEffect, useState } from 'react';
@@ -89,6 +89,7 @@ export default function Page() {
   const [newDeviceColor, setNewDeviceColor] = useState<string>('');
   const [newDeviceType, setNewDeviceType] = useState<string>('');
   const [newFirstDescription, setNewFirstDescription] = useState<string>('');
+  const [newEmail, setNewEmail] = useState<string>('');
   const [newDevicePassword, setNewDevicePassword] = useState<string>('');
   const [newPieceCost, setNewPieceCost] = useState<string>('');
   const [newFinalDiagnostic, setNewFinalDiagnostic] = useState<string>('');
@@ -130,6 +131,7 @@ export default function Page() {
     setNewDeviceColor('');
     setNewDeviceType('');
     setNewFirstDescription('');
+    setNewEmail('');
     setNewDevicePassword('');
     setNewPieceCost('');
     setNewFinalDiagnostic('');
@@ -345,6 +347,17 @@ export default function Page() {
 
     try {
       const response = await createQuote(newQuote);
+      const note = await createNote(response.id_quote);
+      const infoEmail = {
+        to: newEmail,
+        subject: "Nota de remision",
+        message: "Gracias por confiar en nosotros. Usar la nota de remision adjuntada para recibir su dispositivo.",
+        attachments: [
+        note.file
+    ]
+      }
+      const email = await sendEmail(infoEmail);
+      console.log(email)
       reloadTable();
       setNewDevice('');
       setNewDeviceBrand('');
@@ -352,6 +365,7 @@ export default function Page() {
       setNewDeviceType('');
       setNewCustomerName('');
       setNewContactPhone('');
+      setNewEmail('');
       setNewDevicePassword('');
       setNewFistPayment('');
       setNewFirstDescription('');
@@ -415,6 +429,7 @@ export default function Page() {
       device_type: newDeviceType,
       customer_name: newCustomerName,
       contact_phone: newContactPhone,
+      email: newEmail,
       device_password: newDevicePassword,
       first_payment: Number(newFistPayment),
       previous_diagnosis: newFirstDescription,
@@ -433,6 +448,7 @@ export default function Page() {
       setNewDeviceType('');
       setNewCustomerName('');
       setNewContactPhone('');
+      setNewEmail('');
       setNewDevicePassword('');
       setNewFistPayment('');
       setNewFirstDescription('');
@@ -600,6 +616,7 @@ export default function Page() {
       setNewFistPayment(response.diagnostic[0].first_payment);
       setNewDeviceBrand(response.diagnostic[0].device_brand);
       setNewContactPhone(response.diagnostic[0].contact_phone);
+      setNewEmail(response.diagnostic[0].email);
       setNewDevicePassword(response.diagnostic[0].device_password);
       setNewPass(response.diagnostic[0].first_payment);
       setNewFirstDescription(response.diagnostic[0].previous_diagnosis);
@@ -813,12 +830,21 @@ export default function Page() {
           ></input>
         </div>
 
-        <input 
-          value={newDevicePassword}
-          onChange={(e) => setNewDevicePassword(e.target.value)}
-          placeholder='Contraseña del dispositivo:' 
-          className='inputPopUp'
-        ></input><br/>
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          <input 
+            value={newEmail}
+            onChange={(e) => setNewEmail(e.target.value)}
+            placeholder='Correo electronico:' 
+            className='inputPopUp'
+          ></input><br/>
+
+          <input 
+            value={newDevicePassword}
+            onChange={(e) => setNewDevicePassword(e.target.value)}
+            placeholder='Contraseña del dispositivo:' 
+            className='inputPopUp'
+          ></input><br/>
+        </div>
 
         <textarea
           value={newFirstDescription}
@@ -873,12 +899,21 @@ export default function Page() {
           ></input>
         </div>
 
-        <input 
-          value={newDeviceColor}
-          onChange={(e) => setNewDeviceColor(e.target.value)}
-          placeholder='Color del dispositivo:' 
-          className='inputPopUp'
-        ></input>
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          <input 
+            value={newDeviceColor}
+            onChange={(e) => setNewDeviceColor(e.target.value)}
+            placeholder='Color del dispositivo:' 
+            className='inputPopUp'
+          ></input>
+
+          <input 
+            value={newEmail}
+            onChange={(e) => setNewEmail(e.target.value)}
+            placeholder='Correo electronico:' 
+            className='inputPopUp'
+          ></input>
+        </div>
 
         <div style={{display: 'flex', flexDirection: 'row'}}>
           <input 
@@ -891,6 +926,7 @@ export default function Page() {
           <select value={newDeviceType} onChange={(e) => setNewDeviceType(e.target.value)} className='inputPopUp'>
             <option value={''}>Tipo de dispositivo:</option>
             <option value={'Celular'}>Celular</option>
+            <option value={'Tablet'}>Tablet</option>
             <option value={'Laptop'}>Laptop</option>
             <option value={'Patin'}>Patin</option>
             <option value={'Bicicleta'}>BIcicleta</option>
