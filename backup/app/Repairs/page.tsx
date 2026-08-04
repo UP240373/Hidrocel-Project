@@ -102,7 +102,16 @@ export default function Page() {
     }
 
     if (option === "contability") {
-      console.log("seleccionaste contabilidad");
+      try {
+        const response = await verifyAdmin(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("../Contability");
+      } catch (err) {
+        console.error(err)
+      }
     }
   
     if (option === "administrators") {
@@ -149,8 +158,18 @@ export default function Page() {
         return;
       }
 
+      if (isNaN(Number(newApproximateTime))) {
+        setMessage("No se permiten carecteres en el tiempo aproximado");
+        return;
+      }
+
       if (newLaborCosts == '') {
         setMessage("Introduce el costo por mano de obra");
+        return;
+      }
+
+      if (isNaN(Number(newLaborCosts))) {
+        setMessage("No se permiten carecteres en el costo de mano de obra");
         return;
       }
 
@@ -250,8 +269,18 @@ export default function Page() {
       return;
     }
 
+    if (isNaN(Number(laborCosts))) {
+      setMessage("No se permiten carecteres en el costo de mano de obra");
+      return;
+    }
+
     if (approximateTime == '') {
       setMessage("Introduce el tiempo de trabajo");
+      return;
+    }
+
+    if (isNaN(Number(approximateTime))) {
+      setMessage("No se permiten carecteres en el tiempo aproximado");
       return;
     }
   
@@ -513,9 +542,19 @@ export default function Page() {
           <h2>Contraseña</h2>
         </div>
 
-        <input placeholder='Introduce tu contraseña' className='inputPopUp'></input><br/>
+        <input 
+          value={passwordAdmin}
+          onChange={(e) => setPasswordAdmin(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
 
-        <button onClick={() => console.log("aceptar contabilidad")} className='buttonPopUp'>Continuar</button>
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("contability")} className='buttonPopUp'>Continuar</button>
       </Modal>
 
       <Modal isOpen={isOpenAdmins} onClose={() => setOpenAdmins(false)}>

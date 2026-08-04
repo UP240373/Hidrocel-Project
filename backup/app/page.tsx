@@ -126,7 +126,16 @@ export default function Home() {
     }
 
     if (option === "contability") {
-      console.log("seleccionaste contabilidad");
+      try {
+        const response = await verifyAdmin(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("./Contability");
+      } catch (err) {
+        console.error(err)
+      }
     }
 
     if (option === "administrators") {
@@ -285,9 +294,19 @@ export default function Home() {
           <h2>Contraseña</h2>
         </div>
 
-        <input placeholder='Introduce tu contraseña' className='inputPopUp'></input><br/>
+        <input 
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
 
-        <button onClick={() => console.log("aceptar contabilidad")} className='buttonPopUp'>Continuar</button>
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("contability")} className='buttonPopUp'>Continuar</button>
       </Modal>
 
       <Modal isOpen={isOpenAdmins} onClose={() => setOpenAdmins(false)}>

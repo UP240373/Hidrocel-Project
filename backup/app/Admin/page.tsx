@@ -3,7 +3,7 @@
 'use client'
 
 // Importanciones para la pagina
-import { verify, verifyManager } from '../API/api';
+import { verify, verifyAdmin, verifyManager } from '../API/api';
 import { getAdmin, createAdmin, updateAdmin, deleteAdmin } from '../API/Admin/api';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -102,7 +102,16 @@ export default function Page() {
     }
 
     if (option === "contability") {
-      console.log("seleccionaste contabilidad");
+      try {
+        const response = await verifyAdmin(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("../Contability");
+      } catch (err) {
+        console.error(err)
+      }
     }
 
     if (option === "history") {
@@ -133,6 +142,11 @@ export default function Page() {
 
     if (newPhone == '') {
       setMessage("Introduce un numero de telefono");
+      return;
+    }
+
+    if (isNaN(Number(newPhone))) {
+      setMessage("No se permiten carecteres en el numero de telefono");
       return;
     }
 
@@ -199,6 +213,11 @@ export default function Page() {
 
     if (phone == '') {
       setMessage("Introduce un numero de telefono");
+      return;
+    }
+
+    if (isNaN(Number(phone))) {
+      setMessage("No se permiten carecteres en el numero de telefono");
       return;
     }
 
@@ -397,6 +416,11 @@ export default function Page() {
           <option value={'Empleado'}>Empleado</option>
         </select><br/>
 
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
         <button onClick={() => onFinallyEditAdmin(idAdmin)} className='buttonPopUp'>Guardar cambios</button>
       </Modal>
 
@@ -435,9 +459,19 @@ export default function Page() {
           <h2>Contraseña</h2>
         </div>
 
-        <input placeholder='Introduce tu contraseña' className='inputPopUp'></input><br/>
+        <input 
+          value={passwordAdmin}
+          onChange={(e) => setPasswordAdmin(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
 
-        <button onClick={() => console.log("aceptar contabilidad")} className='buttonPopUp'>Continuar</button>
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("contability")} className='buttonPopUp'>Continuar</button>
       </Modal>
 
       <Modal isOpen={isOpenHistory} onClose={() => setOpenHistory(false)}>

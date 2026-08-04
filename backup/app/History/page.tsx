@@ -3,6 +3,7 @@
 'use client'
 
 // Importanciones para la pagina
+import { verify, verifyAdmin, verifyManager } from '../API/api';
 import { useEffect, useState } from 'react';
 import { getHistoryById } from '../API/History/api';
 import { useRouter } from 'next/navigation';
@@ -32,9 +33,15 @@ export default function Page() {
   const [isOpenAdmins, setOpenAdmins] = useState(false);
   const [isOpenHistory, setOpenHistory] = useState(false);
 
+  // Contraseña temporal de admin y gerente
+  const [passwordAdmin, setPasswordAdmin] = useState('');
+
   // Busqueda por nombre del cliente y tipo de dispositivo
   const [search, setSearch] = useState<string>('');
   const [filter, setFilter] = useState<string>('');
+
+  // Mensajes de errores y soluciones
+  const [message, setMessage] = useState<string>('');
 
   // Datos para editar un usuario
   const [idQuote, setIdQuote] = useState<number>(0);
@@ -63,7 +70,58 @@ export default function Page() {
     setRepairCost('');
     setPieceCost('');
     setFinalDiagnostic('');
-  }, [isOpenSeeQuote])
+  }, [isOpenSeeQuote]);
+
+  // Funcion para cambiar a interfaces de Gerentes y Admins
+  const onChangeAdmin = async (option : string) => {
+    if (passwordAdmin == "") {
+      setMessage("Introduce una contraseña");
+      return
+    };
+  
+    const user = {
+      password: passwordAdmin
+    }
+  
+    if (option === "repairs") {
+      try {
+        const response = await verifyManager(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("../Repairs");
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  
+    if (option === "contability") {
+      try {
+        const response = await verifyAdmin(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("../Contability");
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  
+    if (option === "history") {
+      try {
+        const response = await verify(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("./History");
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  };
 
   // Funcion para ver una reparacion completa
   const onSeeOneHistory = async (id : number) => {
@@ -136,7 +194,7 @@ export default function Page() {
 
         </div>
 
-        <SideBar isUseRepairs={false} isUseContability={false} isUseAdmins={false} isUseHistory={false} isOpenRepairs={setOpenRepairs} isOpenContability={setOpenContability} isOpenAdmins={setOpenAdmins} isOpenHistory={setOpenHistory}/>
+        <SideBar isUseRepairs={false} isUseContability={false} isUseAdmins={false} isUseHistory={true} isOpenRepairs={setOpenRepairs} isOpenContability={setOpenContability} isOpenAdmins={setOpenAdmins} isOpenHistory={setOpenHistory}/>
       </div>
 
       <Modal isOpen={isOpenSeeQuote} onClose={() => setOpenSeeQuote(false)}>
@@ -230,6 +288,66 @@ export default function Page() {
           className='textareaPopUp'
           disabled
         ></textarea><br/>
+      </Modal>
+
+      <Modal isOpen={isOpenRepairs} onClose={() => setOpenRepairs(false)}>
+        <div className='titlePopUp'>
+          <h2>Contraseña</h2>
+        </div>
+
+        <input 
+          value={passwordAdmin}
+          onChange={(e) => setPasswordAdmin(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
+
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("repairs")} className='buttonPopUp'>Continuar</button>
+      </Modal>
+
+      <Modal isOpen={isOpenContability} onClose={() => setOpenContability(false)}>
+        <div className='titlePopUp'>
+          <h2>Contraseña</h2>
+        </div>
+
+        <input 
+          value={passwordAdmin}
+          onChange={(e) => setPasswordAdmin(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
+
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("contability")} className='buttonPopUp'>Continuar</button>
+      </Modal>
+
+      <Modal isOpen={isOpenHistory} onClose={() => setOpenHistory(false)}>
+        <div className='titlePopUp'>
+          <h2>Contraseña</h2>
+        </div>
+
+        <input 
+          value={passwordAdmin}
+          onChange={(e) => setPasswordAdmin(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
+
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("history")} className='buttonPopUp'>Continuar</button>
       </Modal>
 
     </div>

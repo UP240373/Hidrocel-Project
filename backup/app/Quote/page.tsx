@@ -179,7 +179,16 @@ export default function Page() {
     }
   
     if (option === "contability") {
-      console.log("seleccionaste contabilidad");
+      try {
+        const response = await verifyAdmin(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("../Contability");
+      } catch (err) {
+        console.error(err)
+      }
     }
   
     if (option === "administrators") {
@@ -257,9 +266,19 @@ export default function Page() {
       setMessage("Introduce el numero de contacto del cliente");
       return;
     }
+
+    if (isNaN(Number(newContactPhone))) {
+      setMessage("No se permiten carecteres en el contacto del cliente");
+      return;
+    }
   
     if (newFistPayment == '') {
       setNewFistPayment('0');
+    }
+
+    if (isNaN(Number(newFistPayment))) {
+      setMessage("No se permiten carecteres en el abono");
+      return;
     }
   
     if (newDeviceBrand == '') {
@@ -315,6 +334,11 @@ export default function Page() {
       }
     }
     days = Math.ceil(days / 24)
+
+    if (isNaN(Number(newPass))) {
+      setMessage("No se permiten carecteres en el abono");
+      return;
+    }
   
     const newQuote = {
       device: newDevice,
@@ -489,8 +513,6 @@ export default function Page() {
   // Funcion para finalizar el proceso de eliminacion de una cotizacion
   const onFinallyEndQuote = async (id : number) => {
 
-    console.log(paymentMethod)
-
     if(newPaymentMethod == '') {
       setMessage('Selecciona el metodo de pago');
       return;
@@ -517,6 +539,7 @@ export default function Page() {
     }
 
     try {
+      console.log(idQuote)
       const response = await addHistory(newHistory);
       console.log(response)
       reloadTable();
@@ -879,9 +902,19 @@ export default function Page() {
           <h2>Contraseña</h2>
         </div>
 
-        <input placeholder='Introduce tu contraseña' className='inputPopUp'></input><br/>
+        <input 
+          value={passwordAdmin}
+          onChange={(e) => setPasswordAdmin(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
 
-        <button onClick={() => console.log("aceptar contabilidad")} className='buttonPopUp'>Continuar</button>
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("contability")} className='buttonPopUp'>Continuar</button>
       </Modal>
 
       <Modal isOpen={isOpenAdmins} onClose={() => setOpenAdmins(false)}>

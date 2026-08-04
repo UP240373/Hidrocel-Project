@@ -54,7 +54,7 @@ export default function Page({ search, onStartEditAdmin, onStartDeleteAdmin } : 
 
               <div className='cellInfo'>
                 <p style={{padding: '0 4%'}}><b>Num tel:</b> {admin.phone}</p>
-                <p style={{padding: '0 4%'}}><b>Contraseña:</b> {admin.password}</p>
+                <p style={{padding: '0 4%'}}><b>Contraseña:</b> {'*'.repeat(admin.password.length)}</p>
                 <p style={{padding: '0 4%'}}><b>Tipo:</b> {admin.administrator_type}</p>
                 <p style={{padding: '0 4%'}}><b>Creado desde:</b> {admin.created_at.split('T')[0]}</p>
               </div>

@@ -16,6 +16,7 @@ const diagnosticsEndpoints = require('./routes/diagnostics');
 const quoteEndpoints = require('./routes/quote');
 const historyEndpoints = require('./routes/history');
 const sendTicket = require('./routes/send');
+const kpiEndpoints = require('./routes/kpis');
 
 // ============ CONFIGURACIÓN ============
 const app = express();
@@ -51,6 +52,7 @@ app.use('/diagnostic', diagnosticsEndpoints);
 app.use('/quote', quoteEndpoints);
 app.use('/history', historyEndpoints);
 app.use('/send', sendTicket);
+app.use('/kpi', kpiEndpoints)
 
 // ============ SERVIDOR NEXT.JS ============
 // Servir archivos estáticos de Next.js

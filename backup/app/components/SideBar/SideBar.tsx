@@ -33,10 +33,15 @@ const SideBar = ({ isUseRepairs, isUseContability, isUseAdmins, isUseHistory, is
         <p>Reparaciones</p>
       </div>}
 
+      {isUseContability ? 
+      <div className="bottonInactiveSideBar">
+        <Image  width={30} src={iconContability} alt="" className="imgSideBar"/>
+        <p>Contabilidad</p>
+      </div> : 
       <div className="bottonActiveSideBar" onClick={() => isOpenContability(true)}>
         <Image  width={30} src={iconContability} alt="" className="imgSideBar"/>
         <p>Contabilidad</p>
-      </div>
+      </div>}
 
       {isUseAdmins ? 
       <div className="bottonInactiveSideBar">
@@ -50,7 +55,7 @@ const SideBar = ({ isUseRepairs, isUseContability, isUseAdmins, isUseHistory, is
 
       {isUseHistory ? 
       <div className="bottonInactiveSideBar">
-        <Image  width={30} src={iconAdmins} alt="" className="imgSideBar"/>
+        <Image  width={30} src={iconHistory} alt="" className="imgSideBar"/>
         <p>Historial</p>
       </div> : 
       <div className="bottonActiveSideBar" onClick={() => isOpenHistory(true)}>

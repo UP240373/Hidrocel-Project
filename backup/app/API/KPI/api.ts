@@ -1,14 +1,10 @@
 
 const API = "http://localhost:3000";
 
-interface user {
-  password: string
-}
-
-// Realizar un test de conexion a la API
-export const test = async () => {
+// Obtener los mejores empleados
+export const getBestEmployees = async () => {
   try {
-    const response = await fetch(`${API}/api/test`, {
+    const response = await fetch(`${API}/kpi/employee`, {
       method: 'GET', 
       headers: {
         'Content-Type': 'application/json',
@@ -22,34 +18,14 @@ export const test = async () => {
   }
 };
 
-// Verificar si existe en el sistema
-export const verify = async (cuerpo : user ) => {
+// Obtener los servicios mas realizados
+export const getServices = async () => {
   try {
-    const response = await fetch(`${API}/auth`, {
-      method: 'POST', 
+    const response = await fetch(`${API}/kpi/service`, {
+      method: 'GET', 
       headers: {
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(cuerpo)
-    })
-    const data = response.json();
-    console.log(data)
-    return data;
-  }
-  catch (err) {
-    console.error("Algo salio mal", err)
-  }
-};
-
-// Verificar si es administrador o gerente
-export const verifyManager = async (cuerpo : user ) => {
-  try {
-    const response = await fetch(`${API}/auth/manager`, {
-      method: 'POST', 
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(cuerpo)
+      }
     })
     const data = response.json();
     return data;
@@ -59,15 +35,31 @@ export const verifyManager = async (cuerpo : user ) => {
   }
 };
 
-// Verificar si es administrador
-export const verifyAdmin = async (cuerpo : user ) => {
+// Obtener los clientes con mayor adeudo
+export const getClients = async () => {
   try {
-    const response = await fetch(`${API}/auth/admin`, {
-      method: 'POST', 
+    const response = await fetch(`${API}/kpi/client`, {
+      method: 'GET', 
       headers: {
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(cuerpo)
+      }
+    })
+    const data = response.json();
+    return data;
+  }
+  catch (err) {
+    console.error("Algo salio mal", err)
+  }
+};
+
+// Obtener las marcas mas reparadas
+export const getBrands = async () => {
+  try {
+    const response = await fetch(`${API}/kpi/brand`, {
+      method: 'GET', 
+      headers: {
+        'Content-Type': 'application/json',
+      }
     })
     const data = response.json();
     return data;

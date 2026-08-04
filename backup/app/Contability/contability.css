@@ -1,0 +1,67 @@
+
+.mainContability {
+  font-family: "Arial Narrow", Arial, sans-serif;
+}
+
+.bodyContability {
+  display: flex;
+  flex-direction: row;
+  height: 89vh;
+  margin: 0.7% -0.7% 0;
+}
+
+.bodyMainContability {
+  width: 162vh;
+}
+
+.titleContability {
+  width: 50vh;
+  height: 7vh;
+  text-align: center;
+  margin: 1% 2%;
+  border-bottom: 2px solid black;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.searchDivContability {
+  margin: 2% 1.5% 0;
+  padding: 1%;
+  align-items: center;
+  font-weight: bold;
+  font-size: 20;
+}
+
+.filterContability {
+  width: 30vh;
+  margin: 0 5%;
+  padding: 1%;
+  background: #B7CDFF;
+  border: 1px solid black;
+  border-radius: 15;
+}
+
+.buttonsContability {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  margin: 3% 1% 0;
+}
+
+.buttonContability {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 30vh;
+  background: #B7CDFF;
+  border-radius: 20;
+}
+
+.buttonContability:hover {
+  cursor: pointer;
+  background: #c1d4ff;
+}
+
+.buttonContability:active {
+  transform: translate(1px, 1px);
+}

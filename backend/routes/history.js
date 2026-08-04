@@ -70,6 +70,9 @@ router.post('/', (req, res) => {
         return res.status(500).json({ error: "Database error", err });
       }
 
+      const queryRepairsDelete = `DELETE FROM quote_repairs WHERE id_quote = ${id_quote}`;
+      db.query(queryRepairsDelete, (err, result) => {});
+      
       const queryDelete = `DELETE FROM quotes WHERE id_quote = ${id_quote}`;
       db.query(queryDelete, (err, result) => {});
 

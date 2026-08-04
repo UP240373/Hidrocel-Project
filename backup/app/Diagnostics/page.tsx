@@ -186,7 +186,16 @@ export default function Page() {
     }
 
     if (option === "contability") {
-      console.log("seleccionaste contabilidad");
+      try {
+        const response = await verifyAdmin(user);
+        if(response.error) {
+          setMessage("Contraseña incorrecta");
+          return;
+        }
+        router.push("../Contability");
+      } catch (err) {
+        console.error(err)
+      }
     }
 
     if (option === "administrators") {
@@ -263,9 +272,19 @@ export default function Page() {
       setMessage("Introduce el numero de contacto del cliente");
       return;
     }
+
+    if (isNaN(Number(newContactPhone))) {
+      setMessage("No se permiten carecteres en el numero de contacto");
+      return;
+    }
   
     if (newFistPayment == '') {
       setNewFistPayment('0');
+    }
+
+    if (isNaN(Number(newFistPayment))) {
+      setMessage("No se permiten carecteres en el abono");
+      return;
     }
   
     if (newDeviceBrand == '') {
@@ -275,6 +294,11 @@ export default function Page() {
   
     if (newDeviceColor == '') {
       setMessage("Introduce el color del dispositivo");
+      return;
+    }
+
+    if (newEmail == '') {
+      setMessage("Introduce el correo del cliente");
       return;
     }
 
@@ -329,6 +353,7 @@ export default function Page() {
       device_type: newDeviceType,
       customer_name: newCustomerName,
       contact_phone: newContactPhone,
+      email: newEmail,
       device_password: newDevicePassword,
       first_payment: Number(newFistPayment),
       previous_diagnosis: newFirstDescription,
@@ -348,16 +373,16 @@ export default function Page() {
     try {
       const response = await createQuote(newQuote);
       const note = await createNote(response.id_quote);
+      
       const infoEmail = {
         to: newEmail,
         subject: "Nota de remision",
         message: "Gracias por confiar en nosotros. Usar la nota de remision adjuntada para recibir su dispositivo.",
         attachments: [
         note.file
-    ]
+        ]
       }
       const email = await sendEmail(infoEmail);
-      console.log(email)
       reloadTable();
       setNewDevice('');
       setNewDeviceBrand('');
@@ -405,6 +430,16 @@ export default function Page() {
 
     if (newFistPayment == '') {
       setNewFistPayment('0');
+    }
+
+    if (isNaN(Number(newFistPayment))) {
+      setMessage("No se permiten carecteres en el abono");
+      return;
+    }
+
+    if (isNaN(Number(newContactPhone))) {
+      setMessage("No se permiten carecteres en el numero de contacto");
+      return;
     }
 
     if (newDeviceBrand == '') {
@@ -512,6 +547,16 @@ export default function Page() {
       setNewFistPayment('0');
     }
 
+    if (isNaN(Number(fistPayment))) {
+      setMessage("No se permiten carecteres en el abono");
+      return;
+    }
+
+    if (isNaN(Number(contactPhone))) {
+      setMessage("No se permiten carecteres en el numero de contacto");
+      return;
+    }
+
     if (deviceBrand == '') {
       setMessage("Introduce la marca");
       return;
@@ -524,6 +569,16 @@ export default function Page() {
 
     if (technicalDiagnosis == '') {
       setMessage("Introduce el problema del dispositivo");
+      return;
+    }
+
+    if (isNaN(Number(estimatedPrice))) {
+      setMessage("No se permiten carecteres en el precio estimado");
+      return;
+    }
+
+    if (deviceType == '') {
+      setMessage("Selecciona el tipo de dispositivo");
       return;
     }
   
@@ -1128,9 +1183,19 @@ export default function Page() {
           <h2>Contraseña</h2>
         </div>
 
-        <input placeholder='Introduce tu contraseña' className='inputPopUp'></input><br/>
+        <input 
+          value={passwordAdmin}
+          onChange={(e) => setPasswordAdmin(e.target.value)}
+          placeholder='Introduce tu contraseña' 
+          className='inputPopUp'
+        ></input><br/>
 
-        <button onClick={() => console.log("aceptar contabilidad")} className='buttonPopUp'>Continuar</button>
+        {message != '' ? 
+          <div className='messageDivPopUp'>
+            <p>{message}</p>
+          </div> : undefined}
+
+        <button onClick={() => onChangeAdmin("contability")} className='buttonPopUp'>Continuar</button>
       </Modal>
 
       <Modal isOpen={isOpenAdmins} onClose={() => setOpenAdmins(false)}>
